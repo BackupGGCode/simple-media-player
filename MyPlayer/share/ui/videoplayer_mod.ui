@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>864</width>
+    <height>528</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Simple VIdeo Player</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="Phonon::VideoPlayer" name="vdpVideo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QWidget" name="wdgVideoControls" native="true">
+      <layout class="QGridLayout" name="glyVideoControls">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="10">
+        <widget class="QPushButton" name="btnShowPlayList">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Show/Hide Playlist</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/view-media-playlist.png</normaloff>../../../practical-python-qt/share/icons/view-media-playlist.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QPushButton" name="btnVideoFill">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Video Fills Entire Space</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/video-fill.png</normaloff>../../../practical-python-qt/share/icons/video-fill.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btnPlayPause">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Play/Pause</string>
+         </property>
+         <property name="whatsThis">
+          <string>Play or Pause current media</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/media-playback-start.png</normaloff>
+           <normalon>../../../practical-python-qt/share/icons/media-playback-pause.png</normalon>../../../practical-python-qt/share/icons/media-playback-start.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="btnStop">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Stop</string>
+         </property>
+         <property name="whatsThis">
+          <string>Stop current media</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/media-playback-stop.png</normaloff>../../../practical-python-qt/share/icons/media-playback-stop.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btnPrevious">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Previous</string>
+         </property>
+         <property name="whatsThis">
+          <string>Play previous media</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/media-skip-backward.png</normaloff>../../../practical-python-qt/share/icons/media-skip-backward.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="btnNext">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Next</string>
+         </property>
+         <property name="whatsThis">
+          <string>Play next media</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/media-skip-forward.png</normaloff>../../../practical-python-qt/share/icons/media-skip-forward.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="Phonon::VolumeSlider" name="sldVolumeSlider">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="tracking">
+          <bool>true</bool>
+         </property>
+         <property name="muteVisible">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="Phonon::SeekSlider" name="sldSeekSlider"/>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="lblTime">
+         <property name="toolTip">
+          <string>Current time</string>
+         </property>
+         <property name="whatsThis">
+          <string>Show current playback time</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QPushButton" name="btnFullscreen">
+         <property name="maximumSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Show fullscreen</string>
+         </property>
+         <property name="whatsThis">
+          <string>Show video in fullscreen</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/view-fullscreen.png</normaloff>
+           <normalon>../../../practical-python-qt/share/icons/view-restore.png</normalon>../../../practical-python-qt/share/icons/view-fullscreen.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="11">
+        <widget class="QPushButton" name="btnAbout">
+         <property name="maximumSize">
+          <size>
+           <width>48</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>About</string>
+         </property>
+         <property name="whatsThis">
+          <string>About this program</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../practical-python-qt/share/icons/help-about.png</normaloff>../../../practical-python-qt/share/icons/help-about.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QDockWidget" name="dckPlayList">
+   <property name="minimumSize">
+    <size>
+     <width>250</width>
+     <height>181</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Choose a tab</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tbPlaylist">
+        <attribute name="title">
+         <string>Play list</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QListWidget" name="lswPlaylist">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>2</horstretch>
+             <verstretch>2</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::DragDrop</enum>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tbSch">
+        <attribute name="title">
+         <string>Search</string>
+        </attribute>
+       </widget>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QWidget" name="wdgPlayList" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="btnAddMedia">
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Add media</string>
+          </property>
+          <property name="whatsThis">
+           <string>Add media to playlist</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../practical-python-qt/share/icons/list-add.png</normaloff>../../../practical-python-qt/share/icons/list-add.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnShufflePlayList">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Shuffle</string>
+          </property>
+          <property name="whatsThis">
+           <string>Shuffle playlist</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../practical-python-qt/share/icons/media-playlist-shuffle.png</normaloff>../../../practical-python-qt/share/icons/media-playlist-shuffle.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnRepeatPlayList">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Repeat</string>
+          </property>
+          <property name="whatsThis">
+           <string>Repeat playlist</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../practical-python-qt/share/icons/media-playlist-repeat.png</normaloff>../../../practical-python-qt/share/icons/media-playlist-repeat.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnRemoveMedia">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Remove media</string>
+          </property>
+          <property name="whatsThis">
+           <string>Remove media from playlist</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../practical-python-qt/share/icons/list-remove.png</normaloff>../../../practical-python-qt/share/icons/list-remove.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnClearPlayList">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Clear playlist</string>
+          </property>
+          <property name="whatsThis">
+           <string>Clear playlist</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../practical-python-qt/share/icons/edit-clear.png</normaloff>../../../practical-python-qt/share/icons/edit-clear.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Phonon::SeekSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/seekslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::VideoPlayer</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/videoplayer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::VolumeSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/volumeslider.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>btnAddMedia</tabstop>
+  <tabstop>btnShufflePlayList</tabstop>
+  <tabstop>btnRepeatPlayList</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnStop</sender>
+   <signal>clicked()</signal>
+   <receiver>vdpVideo</receiver>
+   <slot>stop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>586</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>38</x>
+     <y>523</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_btnPlayPause_clicked()</slot>
+  <slot>on_btnPrevious_clicked()</slot>
+  <slot>on_btnNext_clicked()</slot>
+  <slot>on_btnFullscreen_clicked()</slot>
+  <slot>on_cbxVideoAspect_currentIndexChanged(int)</slot>
+  <slot>on_btnAbout_clicked()</slot>
+  <slot>on_btnShufflePlayList_clicked()</slot>
+  <slot>on_btnRepeatPlayList_clicked()</slot>
+  <slot>on_btnRemoveMedia_clicked()</slot>
+  <slot>on_btnClearPlayList_clicked()</slot>
+  <slot>on_lswPlaylist_doubleClicked(QModelIndex)</slot>
+ </slots>
+</ui>

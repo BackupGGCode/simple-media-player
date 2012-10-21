@@ -50,7 +50,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/view-media-playlist.png</normaloff>../../../practical-python-qt/share/icons/view-media-playlist.png</iconset>
+           <normaloff>../icons/view-media-playlist.png</normaloff>../icons/view-media-playlist.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -73,7 +73,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/video-fill.png</normaloff>../../../practical-python-qt/share/icons/video-fill.png</iconset>
+           <normaloff>../icons/video-fill.png</normaloff>../icons/video-fill.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -99,8 +99,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/media-playback-start.png</normaloff>
-           <normalon>../../../practical-python-qt/share/icons/media-playback-pause.png</normalon>../../../practical-python-qt/share/icons/media-playback-start.png</iconset>
+           <normaloff>../icons/media-playback-pause.png</normaloff>../icons/media-playback-pause.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -126,7 +125,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/media-playback-stop.png</normaloff>../../../practical-python-qt/share/icons/media-playback-stop.png</iconset>
+           <normaloff>../icons/media-playback-stop.png</normaloff>../icons/media-playback-stop.png</iconset>
          </property>
         </widget>
        </item>
@@ -149,7 +148,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/media-skip-backward.png</normaloff>../../../practical-python-qt/share/icons/media-skip-backward.png</iconset>
+           <normaloff>../icons/media-skip-backward.png</normaloff>../icons/media-skip-backward.png</iconset>
          </property>
         </widget>
        </item>
@@ -172,7 +171,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/media-skip-forward.png</normaloff>../../../practical-python-qt/share/icons/media-skip-forward.png</iconset>
+           <normaloff>../icons/media-skip-forward.png</normaloff>../icons/media-skip-forward.png</iconset>
          </property>
         </widget>
        </item>
@@ -224,8 +223,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/view-fullscreen.png</normaloff>
-           <normalon>../../../practical-python-qt/share/icons/view-restore.png</normalon>../../../practical-python-qt/share/icons/view-fullscreen.png</iconset>
+           <normaloff>../icons/view-fullscreen.png</normaloff>../icons/view-fullscreen.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -251,7 +249,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../practical-python-qt/share/icons/help-about.png</normaloff>../../../practical-python-qt/share/icons/help-about.png</iconset>
+           <normaloff>../icons/help-about.png</normaloff>../icons/help-about.png</iconset>
          </property>
         </widget>
        </item>
@@ -347,7 +345,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../practical-python-qt/share/icons/list-add.png</normaloff>../../../practical-python-qt/share/icons/list-add.png</iconset>
+            <normaloff>../icons/list-add.png</normaloff>../icons/list-add.png</iconset>
           </property>
          </widget>
         </item>
@@ -370,7 +368,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../practical-python-qt/share/icons/media-playlist-shuffle.png</normaloff>../../../practical-python-qt/share/icons/media-playlist-shuffle.png</iconset>
+            <normaloff>../icons/media-playlist-shuffle.png</normaloff>../icons/media-playlist-shuffle.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -399,7 +397,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../practical-python-qt/share/icons/media-playlist-repeat.png</normaloff>../../../practical-python-qt/share/icons/media-playlist-repeat.png</iconset>
+            <normaloff>../icons/media-playlist-repeat.png</normaloff>../icons/media-playlist-repeat.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -425,7 +423,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../practical-python-qt/share/icons/list-remove.png</normaloff>../../../practical-python-qt/share/icons/list-remove.png</iconset>
+            <normaloff>../icons/list-remove.png</normaloff>../icons/list-remove.png</iconset>
           </property>
          </widget>
         </item>
@@ -448,7 +446,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../practical-python-qt/share/icons/edit-clear.png</normaloff>../../../practical-python-qt/share/icons/edit-clear.png</iconset>
+            <normaloff>../icons/edit-clear.png</normaloff>../icons/edit-clear.png</iconset>
           </property>
          </widget>
         </item>

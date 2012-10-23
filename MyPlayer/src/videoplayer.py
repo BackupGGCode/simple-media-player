@@ -8,7 +8,6 @@
 
 # A simple player
 import sys
-import os
 import random
 from PyQt4 import QtCore, QtGui, uic, phonon
 
@@ -37,9 +36,9 @@ class VideoPlayer(QtGui.QMainWindow):
         # Initialize the play list.
         # Set some initial playing option.
         #######################################################################
-        self.playlist = []
-        self.playlistTmp = []
-        self.repeat = False
+        self.playlist = [] # A list of links to the file to play.
+        self.playlistTmp = [] # A temporary play list, use to shuffle play list.
+        self.repeat = False # Default mode: not repeating the play list.
 
         #######################################################################
         # Connect the player with the volume and the time sliders.
@@ -85,6 +84,12 @@ class VideoPlayer(QtGui.QMainWindow):
         # Search box: Enter pressed.
         self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
         
+        #######################################################################
+        # The dock widget: show or hide?
+        #######################################################################
+        self.dckShown = True
+        
+        
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
@@ -105,7 +110,6 @@ class VideoPlayer(QtGui.QMainWindow):
         # Clear the original and temporal play list.
         self.playlist = []
         self.playlistTmp = []
-
         self.updatePlayList()
 
     # Event: The 'Full screen' button is clicked.
@@ -147,37 +151,30 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # Select the next media in the play list, and play it.
         self.lswPlaylist.setCurrentRow(index, QtGui.QItemSelectionModel.SelectCurrent)
-        self.on_lswPlaylist_doubleClicked(self.lswPlaylist.item(index))
-
-
-
-
+        self.on_lswPlaylist_doubleClicked()
 
     # Event: The 'play/pause' is pressed.
     @QtCore.pyqtSlot()
     def on_btnPlayPause_clicked(self):
         # If there is some selected item, and it is either 'playing' or
         # 'paused', then switch between the two states.
-        if self.vdpVideo.mediaObject().state() == phonon.Phonon.PlayingState:
+        if self.vdpVideo.isPlaying():
             print "Change to pause"
             self.vdpVideo.pause()
-        else: # self.vdpVideo.mediaObject().state() == phonon.Phonon.PausedState:
+        elif self.vdpVideo.isPaused(): 
             print "Change to play"
             self.vdpVideo.play()
-
-        # If there aren't a selected media in the play list, then select the
-        # first one in the list and play it.
-        #elif self.lswPlaylist.currentRow() < 0:
-            # Select the first item.
-            #self.lswPlaylist.setCurrentRow(0, QtGui.QItemSelectionModel.\
-            #                                        SelectCurrent)
-            # Call this to play it.
-            #self.on_lswPlaylist_doubleClicked(self.lswPlaylist.currentItem())
-        #else:
-            # Play the current item. In this case, it is not selected, but the
-            # state is 'stopped'
-            #self.on_lswPlaylist_doubleClicked(self.lswPlaylist.currentItem())
-
+        else:
+            # There is no media being played/paused. The state is 'stop'.
+            # Select one video and play it.
+            if self.lswPlaylist.currentRow() < 0:
+                # Nothing has been played.
+                # Select the first item
+                self.lswPlaylist.setCurrentRow(0, QtGui.QItemSelectionModel.SelectCurrent)
+            
+            # Now play the video.
+            self.on_lswPlaylist_doubleClicked()
+            
     # Action: click on the 'previous' button.
     @QtCore.pyqtSlot()
     def on_btnPrevious_clicked(self):
@@ -243,7 +240,12 @@ class VideoPlayer(QtGui.QMainWindow):
     # Action: Click on the 'Show Play list' button.
     @QtCore.pyqtSlot()
     def on_btnShowPlayList_clicked(self):
-        pass
+        if self.dckShown:
+            self.dckPlayList.hide()
+        else:
+            self.dckPlayList.show()
+        self.dckShown = not self.dckShown
+            
 
     # Action: Click on the 'Shuffle Play list' button.
     @QtCore.pyqtSlot()
@@ -273,29 +275,32 @@ class VideoPlayer(QtGui.QMainWindow):
 
     # Action: Double an item in the play list to play it.
     @QtCore.pyqtSlot(QtCore.QModelIndex)
-    def on_lswPlaylist_doubleClicked(self, model_index):
+    def on_lswPlaylist_doubleClicked(self):
         # If the play list is empty, do nothing.
         if self.playlist == []:
             return
-        # Get the index of model_index, use it to obtain corresponding MediaSource
-        # Here model_index is of the type QtGui.QListWidgetItem.
-        try:
-            # Get the index of model_view, use it to obtain the corresponding
-            # MediaSource, and then play it.
-            # Here model_index is of the type QtGui.QListWidgetItem.
-            self.vdpVideo.play(self.playlist[model_index.row()])
-        except:
-            # Here model_index is of the type QtGui.QModelIndex.
-            self.vdpVideo.play(self.playlist[self.lswPlaylist.row(model_index)])
+        
+        # Get the index of model_index, use it to obtain corresponding link
+        link = self.playlist[self.lswPlaylist.currentRow()];
+        print "link:", link
+        # Play the video.
+        if link.startsWith(QtCore.QString(r'http://')) or \
+            link.startsWith(QtCore.QString(r'https://')) or \
+            link.startsWith(QtCore.QString(r'mms://')):
+            self.vdpVideo.play(phonon.Phonon.MediaSource(QtCore.QUrl(link)))
+        else:
+            self.vdpVideo.play(phonon.Phonon.MediaSource(link))
+        
 
     # Add local file
     @QtCore.pyqtSlot()
     def on_axnAddLocalFile_triggered(self):
-        # Open the "File selection" dialog
+        # Open the "File selection" dialog. Each items of filenames is a 'QString'
         filenames = QtGui.QFileDialog.getOpenFileNames(self, self.tr('Add local files'))
+        
         # Add the file names to the play list.
         self.addMedias(filenames)
-
+        
 
     # Add URL
     @QtCore.pyqtSlot()
@@ -306,17 +311,20 @@ class VideoPlayer(QtGui.QMainWindow):
         # Open the dialog.
         # The program execution will stop here until user close the dialog.
         addURLDlg.exec_()
-
+        
         if addURLDlg.result() == 0:
+            #Convert the file names to QString.
+            lst = []
+            for filename in addURLDlg.urls:
+                lst.append(QtCore.QString(filename))
             # Add the URLs to the play list.
-            self.addMedias(addURLDlg.urls)
-
+            print lst
+            self.addMedias(lst)
 
     # Add to the play list a list of local files.
     def addMedias(self, medias=[]):
         # Sort the list by name.
         medias.sort()
-
         play = False
 
         if medias != []:
@@ -325,26 +333,8 @@ class VideoPlayer(QtGui.QMainWindow):
             if self.playlist == []:
                 print "play = True"
                 play = True
-
-            # Add files to the play list.
-            # Two cases: Local file / online file
-            for media in medias:
-                try:
-                    if isinstance(media, str):
-                        # Online file.
-                        print "Adding online video"
-                        if media.startswith('http://') or media.startswith('https://') or media.startswith('mms://'):
-                            self.playlist += [phonon.Phonon.MediaSource(QtCore.QUrl(media))]
-                    else:
-                        # Local files
-                        # This case is simpler.
-                        self.playlist += [phonon.Phonon.MediaSource(media)]
-                        print "Adding offline video"
-                except:
-                    """
-                    This version: ignore error here.
-                    """
-                    print "An error has occurred"
+            
+            self.playlist += medias
 
             # update the play list.
             self.updatePlayList()
@@ -352,30 +342,16 @@ class VideoPlayer(QtGui.QMainWindow):
         # If the play list has been loaded and there aren't a media playing,
         # play it.
         if play and self.vdpVideo.mediaObject().state() != phonon.Phonon.PlayingState:
+            print "Now play the newly added media"
             self.on_btnPlayPause_clicked()
 
     # Update the play list.
     def updatePlayList(self):
-        # Create an empty play list.
-        playlist = []
-
-        # For each media to play.
-        for source in self.playlist:
-            # If the media is a local file...
-            if source.type() == phonon.Phonon.MediaSource.LocalFile:
-                # Just add the name of the file without the path.
-                playlist += [os.path.basename(str(source.fileName()))]
-            # If the media is an URL...
-            elif source.type() == phonon.Phonon.MediaSource.Url:
-                print "Updating the play list: Online version."
-                # Add the URL to the list.
-                playlist += [str(source.url().toString())]
-
         # Remove all items in QListWidget
         self.lswPlaylist.clear()
 
         # add the new play list.
-        self.lswPlaylist.addItems(playlist)
+        self.lswPlaylist.addItems(self.playlist)
 
 
     # Response to timer event.

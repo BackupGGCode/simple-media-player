@@ -11,9 +11,12 @@ import sys
 import random
 from PyQt4 import QtCore, QtGui, uic, phonon
 
+import gdata.youtube.service
+
 # Two additional UI module.
 import addurl
 import about
+import print_entry
 
 ###############################################################################
 # A class represent a simple media player.
@@ -89,15 +92,54 @@ class VideoPlayer(QtGui.QMainWindow):
         #######################################################################
         self.dckShown = True
         
+        self.lineEditSearch.setFocus()                
         
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
-        print "Search button pressed"
-        print str(self.lineEditSearch.text())
-        self.lineEditSearch.selectAll()
+        if self.lineEditSearch.text() == '':
+            return
+            
+        if self.rdbRelevance.isChecked:
+            order = "relevance"
+        elif self.rdbPublished.checked:
+            order = "published"
+        elif self.rdbView:
+            order = "viewCount"
+        else:
+            order = "rating"
         
+        print order
+        if self.rdbSafeNone.isChecked:
+            safe = "none"
+        elif self.rdbSafeModerate.isChecked:
+            safe = "moderate"
+        else:
+            safe = "strict"
+        print safe
+        
+        # Init service.
+        yt_service = gdata.youtube.service.YouTubeService()
+        
+        # Init search query.
+        query = gdata.youtube.service.YouTubeVideoQuery()    
+        query.orderby = order
+        query.safeSearch = safe
+        query.vq = str(self.lineEditSearch.text())
+        
+        # Run the query.
+        feed = yt_service.YouTubeQuery(query)
+        
+        # Print the result.
+        html = "<html><head><title>Search Result</title></head><body><ol>"
+        for entry in feed.entry:
+            
+            html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
+        html += "</ol></body></html>"
+        print html
+        
+            
     # Event: The 'About' button is clicked
     @QtCore.pyqtSlot()
     def on_btnAbout_clicked(self):
@@ -174,6 +216,7 @@ class VideoPlayer(QtGui.QMainWindow):
             
             # Now play the video.
             self.on_lswPlaylist_doubleClicked()
+            
             
     # Action: click on the 'previous' button.
     @QtCore.pyqtSlot()

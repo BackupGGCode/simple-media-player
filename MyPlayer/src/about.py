@@ -1,4 +1,4 @@
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtGui, uic
 import sys
 
 class About(QtGui.QDialog):

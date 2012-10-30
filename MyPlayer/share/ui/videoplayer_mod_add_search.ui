@@ -262,7 +262,7 @@
    <property name="minimumSize">
     <size>
      <width>311</width>
-     <height>400</height>
+     <height>466</height>
     </size>
    </property>
    <property name="floating">
@@ -430,6 +430,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QTabWidget" name="tabWidget">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -469,7 +472,7 @@
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
               <widget class="QLabel" name="label">
@@ -530,7 +533,7 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
               <widget class="QLabel" name="label_3">
@@ -588,7 +591,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEditSearch"/>
+              <widget class="QLineEdit" name="lineEditSearch">
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

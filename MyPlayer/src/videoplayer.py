@@ -11,6 +11,8 @@ import sys
 import random
 from PyQt4 import QtCore, QtGui, uic, phonon
 
+from ytSearchResultDialog import YoutubeSearchResultDialog
+
 import gdata.youtube.service
 
 # Two additional UI module.
@@ -33,7 +35,7 @@ class VideoPlayer(QtGui.QMainWindow):
         #######################################################################
         # Load the defined UI.
         #######################################################################
-        uic.loadUi('../share/ui/videoplayer_mod_add_search.ui', self)
+        uic.loadUi('../share/ui/videoplayer.ui', self)
 
         #######################################################################
         # Initialize the play list.
@@ -92,8 +94,21 @@ class VideoPlayer(QtGui.QMainWindow):
         #######################################################################
         self.dckShown = True
         
-        self.lineEditSearch.setFocus()                
+        self.lineEditSearch.setFocus()        
         
+        
+        #######################################################################
+        # The dialog showing search result.
+        #######################################################################
+        self.initSearchResultDialog()
+        
+    def initSearchResultDialog(self):
+        self.searchResultDialog = YoutubeSearchResultDialog()
+        self.searchResultDialog.hide()
+        self.searchResultDialog.btnListOK.clicked.connect(self.processSearchResultDialogCommand)
+    
+    def processSearchResultDialogCommand(self):
+        print self.searchResultDialog.lineEdit.text()
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
@@ -101,44 +116,57 @@ class VideoPlayer(QtGui.QMainWindow):
         if self.lineEditSearch.text() == '':
             return
             
-        if self.rdbRelevance.isChecked:
+        if self.rdbRelevance.isChecked():
             order = "relevance"
-        elif self.rdbPublished.checked:
+        elif self.rdbPublished.isChecked():
             order = "published"
-        elif self.rdbView:
+        elif self.rdbView.isChecked():
             order = "viewCount"
         else:
             order = "rating"
         
         print order
-        if self.rdbSafeNone.isChecked:
+        
+        if self.rdbSafeNone.isChecked():
             safe = "none"
-        elif self.rdbSafeModerate.isChecked:
+        elif self.rdbSafeModerate.isChecked():
             safe = "moderate"
         else:
             safe = "strict"
         print safe
         
-        # Init service.
-        yt_service = gdata.youtube.service.YouTubeService()
+        print "Searching"
         
-        # Init search query.
-        query = gdata.youtube.service.YouTubeVideoQuery()    
-        query.orderby = order
-        query.safeSearch = safe
-        query.vq = str(self.lineEditSearch.text())
-        
-        # Run the query.
-        feed = yt_service.YouTubeQuery(query)
-        
-        # Print the result.
         html = "<html><head><title>Search Result</title></head><body><ol>"
-        for entry in feed.entry:
-            
-            html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
-        html += "</ol></body></html>"
-        print html
         
+        try:
+            # Init service.
+            yt_service = gdata.youtube.service.YouTubeService()
+            
+            # Init search query.
+            query = gdata.youtube.service.YouTubeVideoQuery()    
+            query.orderby = order
+            query.safeSearch = safe
+            query.vq = str(self.lineEditSearch.text())
+            
+            # Run the query.
+            feed = yt_service.YouTubeQuery(query)
+            for entry in feed.entry:
+                html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
+        except:
+            pass
+        html += "</ol></body></html>"
+        print "Done searching"
+        
+        self.searchResultDialog.videoList.setHtml(html)
+        self.searchResultDialog.show()
+        self.setFocus()
+        
+    def closeEvent(self, event):
+        # Close the search result dialog also.
+        if self.searchResultDialog:
+            self.searchResultDialog.close()
+        self.destroy()
             
     # Event: The 'About' button is clicked
     @QtCore.pyqtSlot()
@@ -483,8 +511,6 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # Go to full-screen mode or exit from it.
         self.on_btnFullscreen_clicked()
-
-
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

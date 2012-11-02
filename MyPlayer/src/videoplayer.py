@@ -10,6 +10,7 @@
 import sys
 import random
 from PyQt4 import QtCore, QtGui, uic, phonon
+from PyQt4.QtWebKit import QWebPage
 
 from ytSearchResultDialog import YoutubeSearchResultDialog
 
@@ -19,6 +20,24 @@ import gdata.youtube.service
 import addurl
 import about
 import print_entry
+
+
+class GenericThread(QtCore.QThread):
+    def __init__(self, function, *args, **kwargs):
+        QtCore.QThread.__init__(self)
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+
+    def __del__(self):
+        self.wait()
+
+    
+    def run(self):
+        self.function(*self.args,**self.kwargs)
+        return
+    
+    
 
 ###############################################################################
 # A class represent a simple media player.
@@ -101,7 +120,20 @@ class VideoPlayer(QtGui.QMainWindow):
         # The dialog showing search result.
         #######################################################################
         self.initSearchResultDialog()
+        self.searchResultDialog.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.searchResultDialog.videoList.linkClicked.connect(self.linkClicked)
         
+        
+        #######################################################################
+        # Search thread.
+        #######################################################################
+        self.threadPool = []
+        
+    def linkClicked(self, url):
+        print url.toString()
+    
+    
+    # Initialize the search result dialog.
     def initSearchResultDialog(self):
         self.searchResultDialog = YoutubeSearchResultDialog()
         self.searchResultDialog.hide()
@@ -113,6 +145,7 @@ class VideoPlayer(QtGui.QMainWindow):
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
+        # Get the order option.
         if self.lineEditSearch.text() == '':
             return
             
@@ -125,8 +158,7 @@ class VideoPlayer(QtGui.QMainWindow):
         else:
             order = "rating"
         
-        print order
-        
+        # Get the safe search option.
         if self.rdbSafeNone.isChecked():
             safe = "none"
         elif self.rdbSafeModerate.isChecked():
@@ -135,9 +167,30 @@ class VideoPlayer(QtGui.QMainWindow):
             safe = "strict"
         print safe
         
-        print "Searching"
+        # searching not done: Print the defaul message.
+        self.searchResultDialog.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
         
-        html = "<html><head><title>Search Result</title></head><body><ol>"
+        # Create a thread to do the search.
+        self.threadPool.append(GenericThread(self.ytSearch, order, safe, self.lineEditSearch.text()))        
+        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.threadPool[len(self.threadPool) - 1].start()
+        
+        self.searchResultDialog.show()
+        self.setFocus()
+    
+    def setHtml(self, html):
+        print html
+        print "Setting the html content"
+        self.searchResultDialog.videoList.setHtml(html)
+        
+    def ytSearch(self, order, safe, vq):
+        print "Searching option:"
+        print "Query:", vq
+        print "Order:", order
+        print "Safe search:", safe
+        
+        html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Search Result</title></head><body><ol>'
         
         try:
             # Init service.
@@ -147,20 +200,21 @@ class VideoPlayer(QtGui.QMainWindow):
             query = gdata.youtube.service.YouTubeVideoQuery()    
             query.orderby = order
             query.safeSearch = safe
-            query.vq = str(self.lineEditSearch.text())
+            query.vq = str(vq)
             
             # Run the query.
+            print "Running the query"
             feed = yt_service.YouTubeQuery(query)
+            print "Query: Done"
+            
             for entry in feed.entry:
                 html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
+            
         except:
-            pass
+            print "Some thing wicked happened!"
         html += "</ol></body></html>"
-        print "Done searching"
         
-        self.searchResultDialog.videoList.setHtml(html)
-        self.searchResultDialog.show()
-        self.setFocus()
+        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
         
     def closeEvent(self, event):
         # Close the search result dialog also.
@@ -298,15 +352,10 @@ class VideoPlayer(QtGui.QMainWindow):
         # If the btnVideoFill button is checked, the video will be stretched to
         # fill the entire video widget.
         # otherwise, the video will be preserve it's aspect ratio.
-        if self.vdpVideo.videoWidget().aspectRatio() == \
-            phonon.Phonon.VideoWidget.AspectRatioWidget:
-            self.vdpVideo.videoWidget().\
-                            setAspectRatio(phonon.Phonon.VideoWidget.\
-                                                        AspectRatioAuto)
+        if self.vdpVideo.videoWidget().aspectRatio() == phonon.Phonon.VideoWidget.AspectRatioWidget:
+            self.vdpVideo.videoWidget().setAspectRatio(phonon.Phonon.VideoWidget.AspectRatioAuto)
         else:
-            self.vdpVideo.videoWidget().\
-                            setAspectRatio(phonon.Phonon.VideoWidget.\
-                                                        AspectRatioWidget)
+            self.vdpVideo.videoWidget().setAspectRatio(phonon.Phonon.VideoWidget.AspectRatioWidget)
 
     # Action: Click on the 'Show Play list' button.
     @QtCore.pyqtSlot()

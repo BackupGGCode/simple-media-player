@@ -21,134 +21,146 @@ import addurl
 import about
 import print_entry
 
+# Other modules needed.
+from pytube import YouTube
 
-class GenericThread(QtCore.QThread):
-    def __init__(self, function, *args, **kwargs):
-        QtCore.QThread.__init__(self)
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
+from QtThread import GenericThread
 
-    def __del__(self):
-        self.wait()
-
-    
-    def run(self):
-        self.function(*self.args,**self.kwargs)
-        return
-    
-    
-
-###############################################################################
 # A class represent a simple media player.
-###############################################################################
 class VideoPlayer(QtGui.QMainWindow):
 
     def __init__(self):
-        #######################################################################
         # Initialize: calling the inherited __init__ function.
-        #######################################################################
         super(VideoPlayer, self).__init__()
-
-
-        #######################################################################
+        
+        self.initUI()
+        self.initAttributes()
+       
+    def initUI(self):
         # Load the defined UI.
-        #######################################################################
         uic.loadUi('../share/ui/videoplayer.ui', self)
-
-        #######################################################################
-        # Initialize the play list.
-        # Set some initial playing option.
-        #######################################################################
-        self.playlist = [] # A list of links to the file to play.
-        self.playlistTmp = [] # A temporary play list, use to shuffle play list.
-        self.repeat = False # Default mode: not repeating the play list.
-
-        #######################################################################
-        # Connect the player with the volume and the time sliders.
-        #######################################################################
-        self.sldVolumeSlider.setAudioOutput(self.vdpVideo.audioOutput())
-        self.sldSeekSlider.setMediaObject(self.vdpVideo.mediaObject())
-
-        #######################################################################
+        
         # Creating a menu for adding media.
-        #######################################################################
         self.addMediaMenu = QtGui.QMenu()
-        # Add local file option
         self.axnAddLocalFile = self.addMediaMenu.addAction(self.tr('Add local &File'))
-        # Add link option
         self.axnAddURL = self.addMediaMenu.addAction(self.tr('Add &URL'))
-        # Actually attach the menu to the button.
         self.btnAddMedia.setMenu(self.addMediaMenu)
-        #Connect these to actions.
         self.axnAddLocalFile.triggered.connect(self.on_axnAddLocalFile_triggered)
         self.axnAddURL.triggered.connect(self.on_axnAddURL_triggered)
-
-        #######################################################################
-        # Create a timer. This will be used to show the playing time.
-        #######################################################################
-        self.tmrTimer = QtCore.QTimer(self)
-        # This will emit a signal every 1/4 second.
-        self.tmrTimer.setInterval(250)
-        # Connect the signal emitted to the action self.on_tmrTimer_timeout
-        self.tmrTimer.timeout.connect(self.on_tmrTimer_timeout)
-        # start the timer.
-        self.tmrTimer.start()
-
-        #######################################################################
-        # initialize the current mouse position and time.
-        #######################################################################
-        self.mousePos0 = QtGui.QCursor.pos()
-        self.mouseT0 = QtCore.QTime.currentTime()
-
         
-        #######################################################################
-        # The search tab.
-        #######################################################################
+        # Connect signal-slot.
+        self.sldVolumeSlider.setAudioOutput(self.vdpVideo.audioOutput())
+        self.sldSeekSlider.setMediaObject(self.vdpVideo.mediaObject())        
+        
         # Search box: Enter pressed.
         self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
         
-        #######################################################################
-        # The dock widget: show or hide?
-        #######################################################################
-        self.dckShown = True
-        
-        self.lineEditSearch.setFocus()        
-        
-        
-        #######################################################################
         # The dialog showing search result.
-        #######################################################################
         self.initSearchResultDialog()
         self.searchResultDialog.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.searchResultDialog.videoList.linkClicked.connect(self.linkClicked)
+        self.searchResultDialog.videoList.linkClicked.connect(self.linkClicked)        
+    
+    def initAttributes(self):
+        # Initialize the play list.
+        self.playlist = [] # A list of links to the file to play.
+        self.playlistTmp = [] # A temporary play list, use to shuffle play list.
+        self.repeat = False # Default mode: not repeating the play list.
+        
+        # A timer showing the playing time.
+        self.tmrTimer = QtCore.QTimer(self)
+        self.tmrTimer.setInterval(250) # This will emit a signal every 1/4 second
+        self.tmrTimer.timeout.connect(self.on_tmrTimer_timeout)
+        self.tmrTimer.start()
         
         
-        #######################################################################
+        # initialize the current mouse position and time.
+        self.mousePos0 = QtGui.QCursor.pos()
+        self.mouseT0 = QtCore.QTime.currentTime()
+        
+        # The dock widget: show or hide?
+        self.dckShown = True
+        self.lineEditSearch.setFocus()   
+        
         # Search thread.
-        #######################################################################
         self.threadPool = []
         
-    def linkClicked(self, url):
-        print url.toString()
-    
+        # The thread that process an Youtube link to get direct links.
+        self.ytGetDirectLinkPool = []       
     
     # Initialize the search result dialog.
     def initSearchResultDialog(self):
         self.searchResultDialog = YoutubeSearchResultDialog()
         self.searchResultDialog.hide()
-        self.searchResultDialog.btnListOK.clicked.connect(self.processSearchResultDialogCommand)
+        
     
-    def processSearchResultDialogCommand(self):
-        print self.searchResultDialog.lineEdit.text()
+    # Click a link in the list of videos.
+    def linkClicked(self, url):
+        print url.toString() # DEBUG: Print the link to be parsed.
+        
+        # Process the link.
+        self.ytGetDirectLinkPool.append(GenericThread(self.getYoutubeLink, str(url.toString())))
+        self.disconnect(self, QtCore.SIGNAL("doneGetDirectLinks(QString)"), self.addYtLinks)
+        self.connect(self, QtCore.SIGNAL("doneGetDirectLinks(QString)"), self.addYtLinks)
+        self.ytGetDirectLinkPool[len(self.ytGetDirectLinkPool) - 1].start()
+    
+    # Get direct link for one video.
+    def getYoutubeLink(self, link):       
+        # Filter the result.
+        if self.searchResultDialog.cb240.isChecked():
+            print "Chosen resolution: 240p"
+            resolution = '240p'
+        elif self.searchResultDialog.cb360.isChecked():
+            resolution = '360p'
+            print "Chosen resolution: 360p"
+        elif self.searchResultDialog.cb480.isChecked():
+            resolution = "480p"
+            print "Chosen resolution: 480p"
+        elif self.searchResultDialog.cb720.isChecked():
+            resolution = "720p"
+            print "Chosen resolution: 480p"
+        else:
+            resolution = "1080p"
+            print "Chosen resolution: 1080"
+        
+        media = ""
+        print "Decoding the link"
+        yt = YouTube()
+        yt.url = link
+        print "Done setting the Youtube address"
+        videos = yt.directlinks(res = resolution)
+        print "Done decoding the link"
+        print videos[0].url
+        for video in videos:            
+            media += video.url + "\n"
+            break
+        
+        if media == "":
+            # No links. We'll use the first entry in the list.
+            print "Sorry, no video satisfies your filter condition (file type and resolution)"
+            print "The default entry will be used instead."
+            if len(yt.videos) > 0:
+                media += yt.yt.directlinks()[0].url
+            
+        self.emit(QtCore.SIGNAL('doneGetDirectLinks(QString)'), media)
+    
+    # Add direct links to play list.
+    def addYtLinks(self, links):
+        print links
+        media = links.split("\n")
+        lst = []
+        for link in media:
+            if len(link) > 5: # Ignore blank line.
+                lst.append(QtCore.QString(link))
+                print link
+        
+        self.addMedias(lst)
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
         # Get the order option.
         if self.lineEditSearch.text() == '':
-            return
-            
+            return    
         if self.rdbRelevance.isChecked():
             order = "relevance"
         elif self.rdbPublished.isChecked():
@@ -165,7 +177,6 @@ class VideoPlayer(QtGui.QMainWindow):
             safe = "moderate"
         else:
             safe = "strict"
-        print safe
         
         # searching not done: Print the defaul message.
         self.searchResultDialog.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
@@ -178,18 +189,11 @@ class VideoPlayer(QtGui.QMainWindow):
         
         self.searchResultDialog.show()
         self.setFocus()
-    
+        
     def setHtml(self, html):
-        print html
-        print "Setting the html content"
         self.searchResultDialog.videoList.setHtml(html)
         
     def ytSearch(self, order, safe, vq):
-        print "Searching option:"
-        print "Query:", vq
-        print "Order:", order
-        print "Safe search:", safe
-        
         html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Search Result</title></head><body><ol>'
         
         try:
@@ -209,9 +213,9 @@ class VideoPlayer(QtGui.QMainWindow):
             
             for entry in feed.entry:
                 html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
-            
+                
         except:
-            print "Some thing wicked happened!"
+            html += '<font color="red">Getting search result: Error'
         html += "</ol></body></html>"
         
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
@@ -220,6 +224,12 @@ class VideoPlayer(QtGui.QMainWindow):
         # Close the search result dialog also.
         if self.searchResultDialog:
             self.searchResultDialog.close()
+        
+        for thread in self.threadPool:
+            thread.terminate()
+        for thread in self.ytGetDirectLinkPool:
+            thread.terminate()
+            
         self.destroy()
             
     # Event: The 'About' button is clicked
@@ -443,6 +453,7 @@ class VideoPlayer(QtGui.QMainWindow):
 
     # Add to the play list a list of local files.
     def addMedias(self, medias=[]):
+        print 'Running: Add Media'
         # Sort the list by name.
         medias.sort()
         play = False
@@ -511,17 +522,14 @@ class VideoPlayer(QtGui.QMainWindow):
 
             # Normally, when the program is in full-screen mode, the mouse must
             # be hidden until user move it.
-            if (mousePos != self.mousePos0 and \
-                self.cursor().shape() == QtCore.Qt.BlankCursor) or \
-                self.wdgVideoControls.isVisible():
+            if (mousePos != self.mousePos0 and self.cursor().shape() == QtCore.Qt.BlankCursor) or self.wdgVideoControls.isVisible():
                 self.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
 
                 # Reset the time count for calculating the mouse moving time.
                 self.mouseT0 = QtCore.QTime.currentTime()
             # If user stops moving the mouse, it must stay visible at least some
             # seconds.
-            elif self.cursor().shape() == QtCore.Qt.ArrowCursor and \
-                    self.mouseT0.secsTo(mouseT) > 1:
+            elif self.cursor().shape() == QtCore.Qt.ArrowCursor and self.mouseT0.secsTo(mouseT) > 1:
                 self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
 
             # Update the current mouse position.

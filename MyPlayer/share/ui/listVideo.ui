@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>680</height>
+    <width>553</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,20 +51,6 @@
        <widget class="QWidget" name="dockWidgetContents">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Video number(s):</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit">
-           <property name="inputMethodHints">
-            <set>Qt::ImhPreferNumbers</set>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Function(s)</string>
@@ -96,14 +82,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cb240">
+          <widget class="QRadioButton" name="cb240">
            <property name="text">
             <string>240p</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cb360">
+          <widget class="QRadioButton" name="cb360">
            <property name="text">
             <string>360p</string>
            </property>
@@ -113,30 +99,23 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cb480">
+          <widget class="QRadioButton" name="cb480">
            <property name="text">
             <string>480p</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cb720">
+          <widget class="QRadioButton" name="cb720">
            <property name="text">
             <string>720p</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cb1080">
+          <widget class="QRadioButton" name="cb1080">
            <property name="text">
             <string>1080p</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnListOK">
-           <property name="text">
-            <string>OK</string>
            </property>
           </widget>
          </item>

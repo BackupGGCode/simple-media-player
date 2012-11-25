@@ -9,20 +9,14 @@
 # A simple player
 import sys
 import random
-from PyQt4 import QtCore, QtGui, uic, phonon
-from PyQt4.QtWebKit import QWebPage
-
-from ytSearchResultDialog import YoutubeSearchResultDialog
+from PyQt4 import QtCore, QtGui, uic
+from PyQt4.QtWebKit import QWebPage, QWebSettings
 
 import gdata.youtube.service
 
 # Two additional UI module.
-import addurl
 import about
 import print_entry
-
-# Other modules needed.
-from pytube import YouTube
 
 from QtThread import GenericThread
 
@@ -33,49 +27,16 @@ class VideoPlayer(QtGui.QMainWindow):
         # Initialize: calling the inherited __init__ function.
         super(VideoPlayer, self).__init__()
         
-        self.initUI()
-        self.initAttributes()
-       
-    def initUI(self):
         # Load the defined UI.
         uic.loadUi('../share/ui/videoplayer.ui', self)
+        self.initAttributes()           
         
-        # Creating a menu for adding media.
-        self.addMediaMenu = QtGui.QMenu()
-        self.axnAddLocalFile = self.addMediaMenu.addAction(self.tr('Add local &File'))
-        self.axnAddURL = self.addMediaMenu.addAction(self.tr('Add &URL'))
-        self.btnAddMedia.setMenu(self.addMediaMenu)
-        self.axnAddLocalFile.triggered.connect(self.on_axnAddLocalFile_triggered)
-        self.axnAddURL.triggered.connect(self.on_axnAddURL_triggered)
-        
-        # Connect signal-slot.
-        self.sldVolumeSlider.setAudioOutput(self.vdpVideo.audioOutput())
-        self.sldSeekSlider.setMediaObject(self.vdpVideo.mediaObject())        
-        
-        # Search box: Enter pressed.
-        self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
-        
-        # The dialog showing search result.
-        self.initSearchResultDialog()
-        self.searchResultDialog.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.searchResultDialog.videoList.linkClicked.connect(self.linkClicked)        
-    
     def initAttributes(self):
+        self.showMaximized()
         # Initialize the play list.
         self.playlist = [] # A list of links to the file to play.
         self.playlistTmp = [] # A temporary play list, use to shuffle play list.
         self.repeat = False # Default mode: not repeating the play list.
-        
-        # A timer showing the playing time.
-        self.tmrTimer = QtCore.QTimer(self)
-        self.tmrTimer.setInterval(250) # This will emit a signal every 1/4 second
-        self.tmrTimer.timeout.connect(self.on_tmrTimer_timeout)
-        self.tmrTimer.start()
-        
-        
-        # initialize the current mouse position and time.
-        self.mousePos0 = QtGui.QCursor.pos()
-        self.mouseT0 = QtCore.QTime.currentTime()
         
         # The dock widget: show or hide?
         self.dckShown = True
@@ -84,76 +45,32 @@ class VideoPlayer(QtGui.QMainWindow):
         # Search thread.
         self.threadPool = []
         
-        # The thread that process an Youtube link to get direct links.
-        self.ytGetDirectLinkPool = []       
-    
-    # Initialize the search result dialog.
-    def initSearchResultDialog(self):
-        self.searchResultDialog = YoutubeSearchResultDialog()
-        self.searchResultDialog.hide()
+        # The threads that process an Youtube link to get direct links.
+        self.ytGetDirectLinkPool = []
         
+        # The thread that search for a feed.
+        self.searchFeedPool = []
+        
+        # Enable the flash plugin
+        QWebSettings.globalSettings().setAttribute(QWebSettings.PluginsEnabled, True)
+        
+        # Search box: Enter pressed.
+        self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
+        
+        # The page showing search result.
+        self.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.videoList.connect(self.videoList, QtCore.SIGNAL('linkClicked(const QUrl&)'), self.linkClicked)
+        
+        # Load the page for Youtube.
+        self.stackedWidget.setCurrentIndex(1)
+        self.videoList.load(QtCore.QUrl("https://youtube.com"))
+              
+          
     
     # Click a link in the list of videos.
     def linkClicked(self, url):
-        print url.toString() # DEBUG: Print the link to be parsed.
-        
-        # Process the link.
-        self.ytGetDirectLinkPool.append(GenericThread(self.getYoutubeLink, str(url.toString())))
-        self.disconnect(self, QtCore.SIGNAL("doneGetDirectLinks(QString)"), self.addYtLinks)
-        self.connect(self, QtCore.SIGNAL("doneGetDirectLinks(QString)"), self.addYtLinks)
-        self.ytGetDirectLinkPool[len(self.ytGetDirectLinkPool) - 1].start()
-    
-    # Get direct link for one video.
-    def getYoutubeLink(self, link):       
-        # Filter the result.
-        if self.searchResultDialog.cb240.isChecked():
-            print "Chosen resolution: 240p"
-            resolution = '240p'
-        elif self.searchResultDialog.cb360.isChecked():
-            resolution = '360p'
-            print "Chosen resolution: 360p"
-        elif self.searchResultDialog.cb480.isChecked():
-            resolution = "480p"
-            print "Chosen resolution: 480p"
-        elif self.searchResultDialog.cb720.isChecked():
-            resolution = "720p"
-            print "Chosen resolution: 480p"
-        else:
-            resolution = "1080p"
-            print "Chosen resolution: 1080"
-        
-        media = ""
-        print "Decoding the link"
-        yt = YouTube()
-        yt.url = link
-        print "Done setting the Youtube address"
-        videos = yt.directlinks(res = resolution)
-        print "Done decoding the link"
-        print videos[0].url
-        for video in videos:            
-            media += video.url + "\n"
-            break
-        
-        if media == "":
-            # No links. We'll use the first entry in the list.
-            print "Sorry, no video satisfies your filter condition (file type and resolution)"
-            print "The default entry will be used instead."
-            if len(yt.videos) > 0:
-                media += yt.yt.directlinks()[0].url
-            
-        self.emit(QtCore.SIGNAL('doneGetDirectLinks(QString)'), media)
-    
-    # Add direct links to play list.
-    def addYtLinks(self, links):
-        print links
-        media = links.split("\n")
-        lst = []
-        for link in media:
-            if len(link) > 5: # Ignore blank line.
-                lst.append(QtCore.QString(link))
-                print link
-        
-        self.addMedias(lst)
+        print "You Clicked On a link", url.toString()
+        self.addMedia(url)
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
@@ -179,23 +96,27 @@ class VideoPlayer(QtGui.QMainWindow):
             safe = "strict"
         
         # searching not done: Print the defaul message.
-        self.searchResultDialog.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
+        self.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
         
         # Create a thread to do the search.
         self.threadPool.append(GenericThread(self.ytSearch, order, safe, self.lineEditSearch.text()))        
         self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
         self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
         self.threadPool[len(self.threadPool) - 1].start()
-        
-        self.searchResultDialog.show()
         self.setFocus()
         
     def setHtml(self, html):
-        self.searchResultDialog.videoList.setHtml(html)
+        print "Setting html"
+        #f = open("__test__.html", 'w')
+        #f.write(html)
+        #f.close()
+        
+        #self.videoList.load(QtCore.QUrl("__test__.html"))
+        self.videoList.setHtml(html)
+        print html
+        print self.videoList.page().linkDelegationPolicy() == QWebPage.DelegateAllLinks
         
     def ytSearch(self, order, safe, vq):
-        html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Search Result</title></head><body><ol>'
-        
         try:
             # Init service.
             yt_service = gdata.youtube.service.YouTubeService()
@@ -207,31 +128,23 @@ class VideoPlayer(QtGui.QMainWindow):
             query.vq = str(vq)
             
             # Run the query.
-            print "Running the query"
-            feed = yt_service.YouTubeQuery(query)
-            print "Query: Done"
-            
+            feed = yt_service.YouTubeQuery(query)            
+        except:
+            pass
+        html = self.getFeedHtml(feed)
+        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
+    
+    def getFeedHtml(self, feed):
+        html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Search Result</title></head><body><ol>'
+        try:
             for entry in feed.entry:
                 html += "<li>%s</li>" % print_entry.getHtmlEntry(entry)
-                
         except:
             html += '<font color="red">Getting search result: Error'
         html += "</ol></body></html>"
         
-        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
-        
-    def closeEvent(self, event):
-        # Close the search result dialog also.
-        if self.searchResultDialog:
-            self.searchResultDialog.close()
-        
-        for thread in self.threadPool:
-            thread.terminate()
-        for thread in self.ytGetDirectLinkPool:
-            thread.terminate()
-            
-        self.destroy()
-            
+        return html               
+
     # Event: The 'About' button is clicked
     @QtCore.pyqtSlot()
     def on_btnAbout_clicked(self):
@@ -287,29 +200,6 @@ class VideoPlayer(QtGui.QMainWindow):
         self.lswPlaylist.setCurrentRow(index, QtGui.QItemSelectionModel.SelectCurrent)
         self.on_lswPlaylist_doubleClicked()
 
-    # Event: The 'play/pause' is pressed.
-    @QtCore.pyqtSlot()
-    def on_btnPlayPause_clicked(self):
-        # If there is some selected item, and it is either 'playing' or
-        # 'paused', then switch between the two states.
-        if self.vdpVideo.isPlaying():
-            print "Change to pause"
-            self.vdpVideo.pause()
-        elif self.vdpVideo.isPaused(): 
-            print "Change to play"
-            self.vdpVideo.play()
-        else:
-            # There is no media being played/paused. The state is 'stop'.
-            # Select one video and play it.
-            if self.lswPlaylist.currentRow() < 0:
-                # Nothing has been played.
-                # Select the first item
-                self.lswPlaylist.setCurrentRow(0, QtGui.QItemSelectionModel.SelectCurrent)
-            
-            # Now play the video.
-            self.on_lswPlaylist_doubleClicked()
-            
-            
     # Action: click on the 'previous' button.
     @QtCore.pyqtSlot()
     def on_btnPrevious_clicked(self):
@@ -335,7 +225,7 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # Select the previous media in the play list and play it.
         self.lswPlaylist.setCurrentRow(index, QtGui.QItemSelectionModel.SelectCurrent)
-        self.on_lswPlaylist_doubleClicked(self.lswPlaylist.item(index))
+        self.on_lswPlaylist_doubleClicked()
 
     # Action: Click on the 'Remove media' button.
     @QtCore.pyqtSlot()
@@ -351,21 +241,10 @@ class VideoPlayer(QtGui.QMainWindow):
         self.updatePlayList()
 
 
-    # ACtion: click on the 'Repeat' button.
+    # Action: click on the 'Repeat' button.
     @QtCore.pyqtSlot()
     def on_btnRepeatPlayList_clicked(self):
         self.repeat = not self.repeat
-
-    # Action: click on the 'Video Fill' button.
-    @QtCore.pyqtSlot()
-    def on_btnVideoFill_clicked(self):
-        # If the btnVideoFill button is checked, the video will be stretched to
-        # fill the entire video widget.
-        # otherwise, the video will be preserve it's aspect ratio.
-        if self.vdpVideo.videoWidget().aspectRatio() == phonon.Phonon.VideoWidget.AspectRatioWidget:
-            self.vdpVideo.videoWidget().setAspectRatio(phonon.Phonon.VideoWidget.AspectRatioAuto)
-        else:
-            self.vdpVideo.videoWidget().setAspectRatio(phonon.Phonon.VideoWidget.AspectRatioWidget)
 
     # Action: Click on the 'Show Play list' button.
     @QtCore.pyqtSlot()
@@ -401,7 +280,7 @@ class VideoPlayer(QtGui.QMainWindow):
         # Update the play list.
         self.updatePlayList()
 
-
+    
 
     # Action: Double an item in the play list to play it.
     @QtCore.pyqtSlot(QtCore.QModelIndex)
@@ -413,152 +292,43 @@ class VideoPlayer(QtGui.QMainWindow):
         # Get the index of model_index, use it to obtain corresponding link
         link = self.playlist[self.lswPlaylist.currentRow()];
         print "link:", link
-        # Play the video.
-        if link.startsWith(QtCore.QString(r'http://')) or \
-            link.startsWith(QtCore.QString(r'https://')) or \
-            link.startsWith(QtCore.QString(r'mms://')):
-            self.vdpVideo.play(phonon.Phonon.MediaSource(QtCore.QUrl(link)))
-        else:
-            self.vdpVideo.play(phonon.Phonon.MediaSource(link))
         
+        #Switch to the playerPage
+        #Play the selected video.
+        print "Switching to the video page"
+        self.stackedWidget.setCurrentIndex(0)
+        print "Loading", link.toString()
+        self.playerView.load(link)
+        print 'Adding Url: Done'
 
-    # Add local file
-    @QtCore.pyqtSlot()
-    def on_axnAddLocalFile_triggered(self):
-        # Open the "File selection" dialog. Each items of filenames is a 'QString'
-        filenames = QtGui.QFileDialog.getOpenFileNames(self, self.tr('Add local files'))
-        
-        # Add the file names to the play list.
-        self.addMedias(filenames)
-        
-
-    # Add URL
-    @QtCore.pyqtSlot()
-    def on_axnAddURL_triggered(self):
-        # Create an instance for the "Add URL" dialog.
-        addURLDlg = addurl.AddURL(self)
-
-        # Open the dialog.
-        # The program execution will stop here until user close the dialog.
-        addURLDlg.exec_()
-        
-        if addURLDlg.result() == 0:
-            #Convert the file names to QString.
-            lst = []
-            for filename in addURLDlg.urls:
-                lst.append(QtCore.QString(filename))
-            # Add the URLs to the play list.
-            print lst
-            self.addMedias(lst)
-
-    # Add to the play list a list of local files.
-    def addMedias(self, medias=[]):
+    # Add to the play a link
+    def addMedia(self, url):
         print 'Running: Add Media'
-        # Sort the list by name.
-        medias.sort()
-        play = False
+        self.playlist.append(url)
 
-        if medias != []:
-            # If the play list if currently empty, add files listed in medias
-            # to the list and set play to 'True'
-            if self.playlist == []:
-                print "play = True"
-                play = True
-            
-            self.playlist += medias
+        # update the play list.
+        self.updatePlayList()
 
-            # update the play list.
-            self.updatePlayList()
-
-        # If the play list has been loaded and there aren't a media playing,
+        # If the play list has been loaded and there isn't a media playing,
         # play it.
-        if play and self.vdpVideo.mediaObject().state() != phonon.Phonon.PlayingState:
-            print "Now play the newly added media"
-            self.on_btnPlayPause_clicked()
-
+        if len(self.playlist) == 1:
+            self.stackedWidget.setCurrentIndex(0)
+            #html = '<embed src="%s" allowFullScreen ="true">' % url.toString()
+            print "Now playing", url.toString()
+            self.playerView.load(url)
+        
+        
     # Update the play list.
     def updatePlayList(self):
         # Remove all items in QListWidget
         self.lswPlaylist.clear()
 
         # add the new play list.
-        self.lswPlaylist.addItems(self.playlist)
+        for item in self.playlist:
+            self.lswPlaylist.addItem(item.toString())
 
 
-    # Response to timer event.
-    @QtCore.pyqtSlot()
-    def on_tmrTimer_timeout(self):
-        # Update the playing time and the label.
-        currentTime = self.vdpVideo.currentTime()
-
-        if currentTime == 0:
-            # This is the first time the label is changed.
-            self.lblTime.setText('')
-        else:
-            # Get the total play time
-            totalTime = self.vdpVideo.totalTime()
-            # If the total playing time is less than 1 hour, just show minutes
-            # and seconds.
-            tFormat = 'mm:ss' if totalTime < 3600000 else 'hh:mm:ss'
-
-            # We use Qtime for time conversions.
-            currentTimeH = QtCore.QTime()
-
-            # Convert times to a human readable strings.
-            ct = currentTimeH.addMSecs(currentTime).toString(tFormat)
-
-            totalTimeH = QtCore.QTime()
-            tt = totalTimeH.addMSecs(totalTime).toString(tFormat)
-
-            # Set time to label.
-            self.lblTime.setText(ct + '/' + tt)
-
-        # Now update the mouse status.
-        # The window is in full-screen mode...
-        if self.isFullScreen():
-            # Update the current mouse time and position.
-            mousePos = QtGui.QCursor.pos()
-            mouseT = QtCore.QTime.currentTime()
-
-            # Normally, when the program is in full-screen mode, the mouse must
-            # be hidden until user move it.
-            if (mousePos != self.mousePos0 and self.cursor().shape() == QtCore.Qt.BlankCursor) or self.wdgVideoControls.isVisible():
-                self.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-
-                # Reset the time count for calculating the mouse moving time.
-                self.mouseT0 = QtCore.QTime.currentTime()
-            # If user stops moving the mouse, it must stay visible at least some
-            # seconds.
-            elif self.cursor().shape() == QtCore.Qt.ArrowCursor and self.mouseT0.secsTo(mouseT) > 1:
-                self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
-
-            # Update the current mouse position.
-            self.mousePos0 = mousePos
-
-            # Convert the global mouse position in the screen to the window
-            # local coordinates. And get the coordinate for Y axis.
-            mouseY = self.mapFromGlobal(mousePos).y()
-
-            # If the mouse approaches to the position in which must be the
-            # controls bar, it must be visible.
-            if mouseY < self.height() and \
-                mouseY > self.height() - self.wdgVideoControls.height():
-                if self.wdgVideoControls.isHidden():
-                    self.wdgVideoControls.show()
-            # otherwise it must stay hidden.
-            elif self.wdgVideoControls.isVisible():
-                self.wdgVideoControls.hide()
-        # The window is in normal mode...
-        else:
-            # If the mouse cursor is hidden, show it.
-            if self.cursor().shape() == QtCore.Qt.BlankCursor:
-                self.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-
-            # Show play list.
-            if self.wdgVideoControls.isHidden():
-                self.wdgVideoControls.show()
-
-
+    
     # mouseDoubleClickEvent is a protected method which called when user
     # double clicks in the GUI and this event isn't caught by any other widget.
     def mouseDoubleClickEvent(self, event):
@@ -568,7 +338,79 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # Go to full-screen mode or exit from it.
         self.on_btnFullscreen_clicked()
-
+    
+    
+    # Select the page vie: Search result of video page.
+    @QtCore.pyqtSlot()
+    def on_showVideoPage_clicked(self):
+        self.stackedWidget.setCurrentIndex(0)
+    
+    # Ask to navigate to search result page.
+    @QtCore.pyqtSlot()
+    def on_showSearchPage_clicked(self):
+        self.stackedWidget.setCurrentIndex(1)
+        
+    
+    # Display youtube feeds
+    @QtCore.pyqtSlot()
+    def on_btnMostViewed_clicked(self):
+        self.searchFeed("mostViewed")
+    
+    @QtCore.pyqtSlot()
+    def on_btnTopRated_clicked(self):
+        self.searchFeed("topRated")
+    @QtCore.pyqtSlot()
+    def on_btnRecentlyFeatured_clicked(self):
+        self.searchFeed("recentlyFeatured")
+    @QtCore.pyqtSlot()
+    def on_btnMostDiscussed_clicked(self):
+        self.searchFeed("mostDiscussed")
+    @QtCore.pyqtSlot()
+    def on_btnTopFavorites_clicked(self):
+        self.searchFeed("topFavorites")
+    @QtCore.pyqtSlot()
+    def on_btnMostLinked_clicked(self):
+        self.searchFeed("mostLinked")
+    @QtCore.pyqtSlot()
+    def on_btnMostResponded_clicked(self):
+        self.searchFeed("mostResponded")
+    @QtCore.pyqtSlot()
+    def on_btnMostRecent_clicked(self):
+        self.searchFeed("mostRecent")
+        
+    def searchFeed(self, feedName):
+        print "You want to search the feed", feedName
+        
+        # Create a thread to do the search.
+        # Create a thread to do the search.
+        self.searchFeedPool.append(GenericThread(self.ytFeedSearch, feedName))   
+        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.searchFeedPool[len(self.threadPool) - 1].start()
+        self.setFocus()
+    
+    def ytFeedSearch(self, feedName):
+        yt_service = gdata.youtube.service.YouTubeService()
+        if feedName == "mostViewed":
+            feed = yt_service.GetMostViewedVideoFeed()
+        elif feedName == 'topRated':
+            feed = yt_service.GetTopRatedVideoFeed()
+        elif feedName == 'recentlyFeatured':
+            feed = yt_service.GetRecentlyFeaturedVideoFeed()
+        elif feedName == "mostDiscussed":
+            feed = yt_service.GetMostDiscussedVideoFeed()
+        elif feedName == "topFavorites":
+            feed = yt_service.GetTopFavoritesVideoFeed()
+        elif feedName == "mostLinked":
+            feed = yt_service.GetMostLinkedVideoFeed()
+        elif feedName == "mostResponded":
+            feed = yt_service.GetMostRespondedVideoFeed()
+        else:
+            feed = yt_service.GetMostRecentVideoFeed()
+        
+        html = self.getFeedHtml(feed)
+        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
+        
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     app.setApplicationName('Simple player')

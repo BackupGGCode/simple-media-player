@@ -6,23 +6,69 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
-    <height>720</height>
+    <width>923</width>
+    <height>748</height>
    </rect>
   </property>
   <property name="focusPolicy">
    <enum>Qt::NoFocus</enum>
   </property>
   <property name="windowTitle">
-   <string>Simple VIdeo Player</string>
+   <string>Youtube Browser</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0" rowspan="2" colspan="2">
      <layout class="QVBoxLayout" name="verticalLayout_8"/>
     </item>
-    <item row="2" column="6">
-     <widget class="QPushButton" name="btnFullscreen">
+    <item row="1" column="1" colspan="8">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QWebView" name="playerView">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_3">
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
+         <widget class="QWebView" name="accountTask">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QWebView" name="videoList">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="btnPrevious">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -33,19 +79,73 @@
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="toolTip">
-       <string>Show fullscreen</string>
+       <string>Previous</string>
       </property>
       <property name="whatsThis">
-       <string>Show video in fullscreen</string>
+       <string>Play previous media</string>
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/view-fullscreen.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/view-fullscreen.png</iconset>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
+        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</iconset>
       </property>
      </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="btnNext">
+      <property name="maximumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="toolTip">
+       <string>Next</string>
+      </property>
+      <property name="whatsThis">
+       <string>Play next media</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</iconset>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QPushButton" name="showVideoPage">
+      <property name="text">
+       <string>Show Video Page</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="4">
+     <widget class="QPushButton" name="showSearchPage">
+      <property name="text">
+       <string>Show Search Result</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5">
+     <widget class="QPushButton" name="showAccountPage">
+      <property name="text">
+       <string>Show Account Page</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="6">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>250</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="2" column="7">
      <widget class="QPushButton" name="btnShowPlayList">
@@ -93,112 +193,6 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1" colspan="8">
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <widget class="QWidget" name="page">
-       <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0">
-         <widget class="QWebView" name="playerView">
-          <property name="url">
-           <url>
-            <string>https://www.youtube.com/</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="page_2">
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QWebView" name="videoList">
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="btnNext">
-      <property name="maximumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Next</string>
-      </property>
-      <property name="whatsThis">
-       <string>Play next media</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="btnPrevious">
-      <property name="maximumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Previous</string>
-      </property>
-      <property name="whatsThis">
-       <string>Play previous media</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="3">
-     <widget class="QPushButton" name="showVideoPage">
-      <property name="text">
-       <string>Show Video Page</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="5">
-     <spacer name="horizontalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>250</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="4">
-     <widget class="QPushButton" name="showSearchPage">
-      <property name="text">
-       <string>Show Search Result</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QDockWidget" name="dckPlayList">
@@ -210,8 +204,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>176</width>
-     <height>411</height>
+     <width>350</width>
+     <height>748</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -224,10 +218,10 @@
     <bool>false</bool>
    </property>
    <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::AllDockWidgetAreas</set>
    </property>
    <property name="windowTitle">
     <string>Choose a tab</string>
@@ -292,32 +286,6 @@
           </property>
           <property name="flat">
            <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnRepeatPlayList">
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Repeat</string>
-          </property>
-          <property name="whatsThis">
-           <string>Repeat playlist</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../icons/media-playlist-repeat.png</normaloff>../icons/media-playlist-repeat.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -389,7 +357,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tbPlaylist">
         <attribute name="title">
@@ -422,174 +390,417 @@
          <string>Search</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QSplitter" name="splitter">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <widget class="QWidget" name="layoutWidget">
-            <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item row="0" column="0" rowspan="2">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Sort by</string>
+             </property>
+             <property name="buddy">
+              <cstring>sortbyButtonGroup</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QRadioButton" name="rdbRelevance">
                <property name="text">
-                <string>Sort by</string>
+                <string>Relevance</string>
                </property>
-               <property name="buddy">
-                <cstring>sortbyButtonGroup</cstring>
+               <property name="checked">
+                <bool>true</bool>
                </property>
+               <attribute name="buttonGroup">
+                <string notr="true">sortbyButtonGroup</string>
+               </attribute>
               </widget>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <widget class="QRadioButton" name="rdbRelevance">
-                 <property name="text">
-                  <string>Relevance</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">sortbyButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rdbPublished">
-                 <property name="text">
-                  <string>Published date</string>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">sortbyButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rdbView">
-                 <property name="text">
-                  <string>View count</string>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">sortbyButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rdbRating">
-                 <property name="text">
-                  <string>Rating</string>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">sortbyButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="layoutWidget">
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QRadioButton" name="rdbPublished">
                <property name="text">
-                <string>Safe search</string>
+                <string>Published date</string>
                </property>
+               <attribute name="buttonGroup">
+                <string notr="true">sortbyButtonGroup</string>
+               </attribute>
               </widget>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <item>
-                <widget class="QRadioButton" name="rdbSafeNone">
-                 <property name="text">
-                  <string>None</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">safeSearchButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rdbSafeModerate">
-                 <property name="text">
-                  <string>Moderate</string>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">safeSearchButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="rdbSafeStrict">
-                 <property name="text">
-                  <string>Strict</string>
-                 </property>
-                 <attribute name="buttonGroup">
-                  <string notr="true">safeSearchButtonGroup</string>
-                 </attribute>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="layoutWidget">
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QRadioButton" name="rdbView">
                <property name="text">
-                <string>Search term</string>
+                <string>View count</string>
                </property>
+               <attribute name="buttonGroup">
+                <string notr="true">sortbyButtonGroup</string>
+               </attribute>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEditSearch">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+              <widget class="QRadioButton" name="rdbRating">
+               <property name="text">
+                <string>Rating</string>
                </property>
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">sortbyButtonGroup</string>
+               </attribute>
               </widget>
              </item>
             </layout>
-           </widget>
-          </widget>
+           </item>
+          </layout>
          </item>
-         <item row="1" column="0">
+         <item row="0" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Search result number</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spbMaxResults">
+             <property name="minimum">
+              <number>10</number>
+             </property>
+             <property name="maximum">
+              <number>500</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+             <property name="value">
+              <number>25</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="1" rowspan="2">
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Duration</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QRadioButton" name="radioButton">
+               <property name="text">
+                <string>All</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">durationButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>Short</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">durationButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_3">
+               <property name="text">
+                <string>Medium</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">durationButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_4">
+               <property name="text">
+                <string>Long</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">durationButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0" rowspan="2">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Safe search</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QRadioButton" name="rdbSafeNone">
+               <property name="text">
+                <string>None</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">safeSearchButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rdbSafeModerate">
+               <property name="text">
+                <string>Moderate</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">safeSearchButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rdbSafeStrict">
+               <property name="text">
+                <string>Strict</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">safeSearchButtonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Genre</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <property name="maxVisibleItems">
+              <number>30</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>00 - All</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>01 - Action</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>02 - Animations &amp; Film</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>03 - Classic TV</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>04 - Comedy</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>05 - Drama</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>06 - Home &amp; Garden</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>07 - News</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>08 - Reality &amp; Game Shows</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>09 - Science &amp; Tech</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>10 - Science Fiction</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>11 - Soaps</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>13 - Sports</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>14 - Travel</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16 - Entertainment</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>17 - Documentary</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>20 - Nature</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>21 - Beauty &amp;Fashion</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>23 - Food</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>24 - Gaming</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>25 - Health &amp; Fitness</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>26 - Learning &amp; Education</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>27 - Foreign Languages</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item>
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Format</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_2">
+             <item>
+              <property name="text">
+               <string>00 - All Formats</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>01- H. 264 mobile</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>05 - Embeddable</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>06 - MPEG 4 mobile</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Search term</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditSearch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="5" column="0">
           <widget class="QPushButton" name="btnSearchVideo">
            <property name="text">
             <string>Seach</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <spacer name="verticalSpacer">
+         <item row="6" column="0" colspan="2">
+          <widget class="Line" name="line">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tbFeeds">
-        <attribute name="title">
-         <string>Feeds</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-         <item>
+         <item row="7" column="0" colspan="2">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" rowspan="2">
           <layout class="QFormLayout" name="formLayout">
            <item row="0" column="0">
             <widget class="QLabel" name="label_4">
@@ -660,26 +871,140 @@
            </item>
           </layout>
          </item>
-         <item>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
+         <item row="8" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
             <widget class="QLabel" name="label_5">
              <property name="text">
               <string>Feed by user</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
+           <item>
             <widget class="QLineEdit" name="lineeditUserFeed"/>
            </item>
           </layout>
          </item>
+         <item row="9" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>264</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
+        <zorder>btnSearchVideo</zorder>
+        <zorder>line</zorder>
+        <zorder>line_2</zorder>
+        <zorder>lineeditUserFeed</zorder>
        </widget>
        <widget class="QWidget" name="tbDownload">
         <attribute name="title">
          <string>Download</string>
         </attribute>
+       </widget>
+       <widget class="QWidget" name="tbAccount">
+        <attribute name="title">
+         <string>Account</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>40</y>
+           <width>217</width>
+           <height>122</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="QLabel" name="labelGreeting">
+              <property name="text">
+               <string>Hello</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="widget" native="true">
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>Username</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="ledUsername">
+                   <property name="inputMethodHints">
+                    <set>Qt::ImhEmailCharactersOnly</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="label_7">
+                   <property name="text">
+                    <string>Password</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="ledPassword">
+                   <property name="inputMethodHints">
+                    <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText</set>
+                   </property>
+                   <property name="echoMode">
+                    <enum>QLineEdit::Password</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="btnLogin">
+              <property name="text">
+               <string>Login</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QPushButton" name="btnUpload">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>220</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Upload video</string>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -723,6 +1048,7 @@
  </slots>
  <buttongroups>
   <buttongroup name="sortbyButtonGroup"/>
+  <buttongroup name="durationButtonGroup"/>
   <buttongroup name="safeSearchButtonGroup"/>
  </buttongroups>
 </ui>

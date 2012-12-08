@@ -6,7 +6,7 @@
 #
 #
 
-# A simple player
+import traceback
 import sys
 import random
 from PyQt4 import QtCore, QtGui, uic
@@ -19,6 +19,7 @@ import about
 import print_entry
 
 from QtThread import GenericThread
+from login_youtube import doLogin
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -63,14 +64,28 @@ class VideoPlayer(QtGui.QMainWindow):
         
         # Load the page for Youtube.
         self.stackedWidget.setCurrentIndex(1)
-        self.videoList.load(QtCore.QUrl("https://youtube.com"))
-              
-          
+        
+        #The id of this application and the place to login.
+        self.clientId = '401858455989.apps.googleusercontent.com'
+        self.clientSecret = 'qs1g3M6c2YvD9CCiMHIeClOy'
+        self.homeURL = QtCore.QUrl(r'https://youtube.com')
+        
+        #Load the default page.
+        self.videoList.load(self.homeURL)
+        
+        if not self.videoList.page().networkAccessManager() == None:
+            print "Now the two page should share the same session!"
+            self.playerView.page().setNetworkAccessManager(self.videoList.page().networkAccessManager())
+            self.accountTask.page().setNetworkAccessManager(self.videoList.page().networkAccessManager())
+
+        # A seperate frame for login.
+        self.logged_in = False
     
     # Click a link in the list of videos.
     def linkClicked(self, url):
-        print "You Clicked On a link", url.toString()
-        self.addMedia(url)
+        print "You clicked on a link", url.toString()
+        if str(url.toString()).find('youtube') != -1:
+            self.addMedia(url)
     
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
@@ -107,14 +122,7 @@ class VideoPlayer(QtGui.QMainWindow):
         
     def setHtml(self, html):
         print "Setting html"
-        #f = open("__test__.html", 'w')
-        #f.write(html)
-        #f.close()
-        
-        #self.videoList.load(QtCore.QUrl("__test__.html"))
         self.videoList.setHtml(html)
-        print html
-        print self.videoList.page().linkDelegationPolicy() == QWebPage.DelegateAllLinks
         
     def ytSearch(self, order, safe, vq):
         try:
@@ -313,7 +321,6 @@ class VideoPlayer(QtGui.QMainWindow):
         # play it.
         if len(self.playlist) == 1:
             self.stackedWidget.setCurrentIndex(0)
-            #html = '<embed src="%s" allowFullScreen ="true">' % url.toString()
             print "Now playing", url.toString()
             self.playerView.load(url)
         
@@ -348,8 +355,21 @@ class VideoPlayer(QtGui.QMainWindow):
     # Ask to navigate to search result page.
     @QtCore.pyqtSlot()
     def on_showSearchPage_clicked(self):
+        self.stackedWidget.setCurrentIndex(2)
+    
+    
+    # Ask to navigate to account page.
+    @QtCore.pyqtSlot()
+    def on_showAccountPage_clicked(self):
         self.stackedWidget.setCurrentIndex(1)
         
+    @QtCore.pyqtSlot()
+    def on_btnUpload_clicked(self):
+        if not self.logged_in:
+            print "You have to login first"
+        else:
+            self.accountTask.load(QtCore.QUrl("https://www.youtube.com/my_videos_upload"))
+            self.on_showAccountPage_clicked()
     
     # Display youtube feeds
     @QtCore.pyqtSlot()
@@ -382,11 +402,10 @@ class VideoPlayer(QtGui.QMainWindow):
         print "You want to search the feed", feedName
         
         # Create a thread to do the search.
-        # Create a thread to do the search.
         self.searchFeedPool.append(GenericThread(self.ytFeedSearch, feedName))   
         self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
         self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.searchFeedPool[len(self.threadPool) - 1].start()
+        self.searchFeedPool[len(self.searchFeedPool) - 1].start()
         self.setFocus()
     
     def ytFeedSearch(self, feedName):
@@ -410,7 +429,63 @@ class VideoPlayer(QtGui.QMainWindow):
         
         html = self.getFeedHtml(feed)
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
+    
+    def login(self, email, password):
+        # This takes time, so we have to start a thread.
+        print "Starting youtube service"
+        yt_service = gdata.youtube.service.YouTubeService()
+        yt_service.email = email
+        yt_service.password = password
+        print "Setting username and password: done"
         
+        # Login.
+        try:
+            # API: login.
+            print "Call ProgrammaticLogin()"
+            print yt_service.ProgrammaticLogin()
+            print "After the call"            
+        except:
+            #TODO: Display a warning dialog.
+            print "Login failed!"
+            self.logged_in = False
+            self.emit(QtCore.SIGNAL('failedLogin()'))
+            return
+        print "setting logged_in = True"
+        self.logged_in = True
+        self.emit(QtCore.SIGNAL('doneLogin(QString)'), QtCore.QString(email + " " + password))
+    
+    
+    # User clicked on the 'login' button.
+    @QtCore.pyqtSlot()
+    def on_btnLogin_clicked(self):
+        print "The 'Loggin button '"     
+        if not self.logged_in:
+            print "Start the login process"
+            
+            # Start a login thread.
+            username = self.ledUsername.text()
+            password = self.ledPassword.text()
+            loginThread = GenericThread(self.login, username, password)
+            self.connect(self, QtCore.SIGNAL("doneLogin(QString)"), self.webLogin)
+            self.connect(self, QtCore.SIGNAL("failedLogin()"), self.failedLoginWarning)
+            print "The login thread is started"
+            loginThread.start()       
+        
+    def webLogin(self, loginInfo):
+        #Web login.
+        #Load the login page and fill in information.
+        [username, password] = str(loginInfo).split()
+        doLogin(self.accountTask, QtCore.QUrl(r"https://accounts.google.com/Login"), username, password)
+        self.labelGreeting.setText("Hello, %s" % username)
+            
+        # Load the login page and log in using the web interface.
+        self.videoList.load(self.homeURL)
+        
+    def failedLoginWarning(self):
+        #TODO: display a warning message.
+        print "Login failed."
+            
+    
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     app.setApplicationName('Simple player')

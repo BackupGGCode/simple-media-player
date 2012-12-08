@@ -1,12 +1,10 @@
 # -*- coding: utf-8 *-*
 ###############################################################################
 # A simple media player.
-# This project is based on the tutorial
 #
 #
 #
 
-import traceback
 import sys
 import random
 from PyQt4 import QtCore, QtGui, uic
@@ -60,6 +58,7 @@ class VideoPlayer(QtGui.QMainWindow):
         
         # The page showing search result.
         self.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.accountTask.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.videoList.connect(self.videoList, QtCore.SIGNAL('linkClicked(const QUrl&)'), self.linkClicked)
         
         # Load the page for Youtube.

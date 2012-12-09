@@ -3,7 +3,7 @@ from PyQt4.QtCore import QUrl
 from PyQt4.QtGui import QApplication
 from PyQt4.QtWebKit import QWebView
 from PyQt4.QtNetwork import QNetworkAccessManager
-from PyQt4 import QtCore
+from PyQt4.QtWebKit import QWebSettings
 
 def fillForm(web, username, password):
     print "Filling in the form"
@@ -27,11 +27,14 @@ def doLogin(web, url, username, password):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    nam = QNetworkAccessManager()
+
     web = QWebView()
-    web.page().setNetworkAccessManager(nam)
+    settings = web.settings()
+    settings.setAttribute(QWebSettings.PluginsEnabled, True)
+    web.settings().setAttribute(QWebSettings.JavascriptEnabled, True)
+    
     url = QUrl(r"https://accounts.google.com/Login")
-    username = "huynhlv54"
-    password = "03300248204979nttncn"
+    username = raw_input("Username: ")
+    password = raw_input("Password: ")
     doLogin(web, url, username, password)
     app.exec_()

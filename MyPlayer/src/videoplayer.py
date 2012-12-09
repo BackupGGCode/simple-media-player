@@ -11,6 +11,7 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtWebKit import QWebPage, QWebSettings
 
 import gdata.youtube.service
+import gdata
 
 # Two additional UI module.
 import about
@@ -57,8 +58,8 @@ class VideoPlayer(QtGui.QMainWindow):
         self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
         
         # The page showing search result.
+        #self.accountTask.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        self.accountTask.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.videoList.connect(self.videoList, QtCore.SIGNAL('linkClicked(const QUrl&)'), self.linkClicked)
         
         # Load the page for Youtube.
@@ -367,8 +368,32 @@ class VideoPlayer(QtGui.QMainWindow):
         if not self.logged_in:
             print "You have to login first"
         else:
-            self.accountTask.load(QtCore.QUrl("https://www.youtube.com/my_videos_upload"))
-            self.on_showAccountPage_clicked()
+            # Get the video information.
+            movie_title = raw_input("Enter video title: ")
+            video_file_location = raw_input("Enter path to the file: ")
+            #upload the file.
+            my_media_group = gdata.media.Group(
+                title=gdata.media.Title(text=movie_title),
+                description=gdata.media.Description(description_type='plain',
+                                                  text='My description'),
+                keywords=gdata.media.Keywords(text='cars, funny'),
+                category=[[]gdata.media.Category(
+                  text='Autos',
+                  scheme='http://gdata.youtube.com/schemas/2007/categories.cat',
+                  label='Autos')],
+              player=None
+            )
+            
+            # prepare a geo.where object to hold the geographical location
+            # of where the video was recorded
+            where = gdata.geo.Where()
+            where.set_location((37.0,-122.0))
+
+            # create the gdata.youtube.YouTubeVideoEntry to be uploaded
+            video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group, geo=where)
+            new_entry = self.yt_service.InsertVideoEntry(video_entry, video_file_location)
+
+# set the path for the video file binary
     
     # Display youtube feeds
     @QtCore.pyqtSlot()
@@ -450,6 +475,7 @@ class VideoPlayer(QtGui.QMainWindow):
             self.emit(QtCore.SIGNAL('failedLogin()'))
             return
         print "setting logged_in = True"
+        self.yt_service = yt_service
         self.logged_in = True
         self.emit(QtCore.SIGNAL('doneLogin(QString)'), QtCore.QString(email + " " + password))
     

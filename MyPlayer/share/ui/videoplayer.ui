@@ -189,7 +189,7 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/help-about.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/help-about.png</iconset>
+        <normaloff>../icons/help-about.png</normaloff>../icons/help-about.png</iconset>
       </property>
      </widget>
     </item>
@@ -899,10 +899,6 @@
           </spacer>
          </item>
         </layout>
-        <zorder>btnSearchVideo</zorder>
-        <zorder>line</zorder>
-        <zorder>line_2</zorder>
-        <zorder>lineeditUserFeed</zorder>
        </widget>
        <widget class="QWidget" name="tbDownload">
         <attribute name="title">

@@ -377,7 +377,7 @@ class VideoPlayer(QtGui.QMainWindow):
                 description=gdata.media.Description(description_type='plain',
                                                   text='My description'),
                 keywords=gdata.media.Keywords(text='cars, funny'),
-                category=[[]gdata.media.Category(
+                category=[gdata.media.Category(
                   text='Autos',
                   scheme='http://gdata.youtube.com/schemas/2007/categories.cat',
                   label='Autos')],

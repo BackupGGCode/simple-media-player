@@ -432,7 +432,6 @@ class VideoPlayer(QtGui.QMainWindow):
             messageBox = WarningDialog.WarningDialog(warning = "You have to log in first", parent = self)
             messageBox.show()
         else:
-<<<<<<< .mine
             print "Calling the function upload"
             # Get the video information.            
             self.uploadDialog.show()
@@ -479,28 +478,6 @@ class VideoPlayer(QtGui.QMainWindow):
         print "Set the location"
         where = gdata.geo.Where()
         where.set_location((37.0,-122.0))
-=======
-            # Get the video information.
-            movie_title = raw_input("Enter video title: ")
-            video_file_location = raw_input("Enter path to the file: ")
-            #upload the file.
-            my_media_group = gdata.media.Group(
-                title=gdata.media.Title(text=movie_title),
-                description=gdata.media.Description(description_type='plain',
-                                                  text='My description'),
-                keywords=gdata.media.Keywords(text='cars, funny'),
-                category=[gdata.media.Category(
-                  text='Autos',
-                  scheme='http://gdata.youtube.com/schemas/2007/categories.cat',
-                  label='Autos')],
-              player=None
-            )
-            
-            # prepare a geo.where object to hold the geographical location
-            # of where the video was recorded
-            where = gdata.geo.Where()
-            where.set_location((37.0,-122.0))
->>>>>>> .r18
 
         # create the gdata.youtube.YouTubeVideoEntry to be uploaded
         print "Creating an entry"

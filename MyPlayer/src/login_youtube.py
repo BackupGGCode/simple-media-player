@@ -2,8 +2,15 @@ import sys
 from PyQt4.QtCore import QUrl
 from PyQt4.QtGui import QApplication
 from PyQt4.QtWebKit import QWebView
-from PyQt4.QtNetwork import QNetworkAccessManager
-from PyQt4.QtWebKit import QWebSettings
+from PyQt4.QtWebKit import QWebSettings, QWebPage
+
+class Browser(QWebPage):
+    def __init__(self):
+        super(QWebPage, self).__init__()
+
+    def userAgentForUrl(self, url):
+        return "Mozilla/5.0 (X11; Linux x86_64; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"
+
 
 def fillForm(web, username, password):
     print "Filling in the form"
@@ -32,6 +39,7 @@ if __name__ == "__main__":
     settings = web.settings()
     settings.setAttribute(QWebSettings.PluginsEnabled, True)
     web.settings().setAttribute(QWebSettings.JavascriptEnabled, True)
+    web.setPage(Browser())
     
     url = QUrl(r"https://accounts.google.com/Login")
     username = raw_input("Username: ")

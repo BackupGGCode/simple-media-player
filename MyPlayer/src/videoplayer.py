@@ -19,6 +19,8 @@ import print_entry
 
 from QtThread import GenericThread
 from login_youtube import doLogin
+from uploadDialog import UploadDialog
+import WarningDialog
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -51,6 +53,9 @@ class VideoPlayer(QtGui.QMainWindow):
         # The thread that search for a feed.
         self.searchFeedPool = []
         
+        #upload threads.
+        self.uploadThreadPool = []
+        
         # Enable the flash plugin
         QWebSettings.globalSettings().setAttribute(QWebSettings.PluginsEnabled, True)
         
@@ -80,6 +85,8 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # A seperate frame for login.
         self.logged_in = False
+        
+        self.uploadDialog = UploadDialog(self)
     
     # Click a link in the list of videos.
     def linkClicked(self, url):
@@ -87,6 +94,34 @@ class VideoPlayer(QtGui.QMainWindow):
         if str(url.toString()).find('youtube') != -1:
             self.addMedia(url)
     
+    # User's feed.
+    @QtCore.pyqtSlot()
+    def on_lineeditUserFeed_returnPressed(self):
+        print "You want to get %s's feed(s)" % self.lineeditUserFeed.displayText()
+        # Start searching.
+        
+        self.threadPool.append(GenericThread(self.ytUserFeedSearch, self.lineeditUserFeed.displayText()) )        
+        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
+        self.threadPool[len(self.threadPool) - 1].start()
+        self.setFocus()        
+    
+    def ytUserFeedSearch(self, username):
+        # Reuse session if possible.
+        try:
+            yt_service = self.yt_service
+        except:
+            print "Using anonymous account"
+            yt_service = gdata.youtube.service.YouTubeService()
+        
+        print "Getting feed" 
+        uri = 'http://gdata.youtube.com/feeds/api/users/%s/uploads' % username
+        feed = yt_service.GetYouTubeVideoFeed(uri)
+        print "Done getting feed."
+        html = self.getFeedHtml(feed)
+        
+        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
+                
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
@@ -110,11 +145,33 @@ class VideoPlayer(QtGui.QMainWindow):
         else:
             safe = "strict"
         
+        # Get the length option.
+        length = "all"
+        if self.rdbDurationShort.isChecked():
+            length = "short"
+        elif self.rdbDurationMedium.isChecked():
+            length = "Medium"
+        elif self.rdbDurationLong.isChecked():
+            length = "Long"
+        print "length:", length
+        
+        # Get the length option
+        _format = int(str(self.cbFormat.currentText())[:2])
+        
+        # Get the search result number.
+        maxResult = int(self.spbMaxResults.cleanText())
+        
+        #Get the genre option.
+        genre = str(self.cbGenre.currentText())
+        
+        # get the search term.
+        searchTerm = self.lineEditSearch.text()
+        
         # searching not done: Print the defaul message.
         self.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
         
         # Create a thread to do the search.
-        self.threadPool.append(GenericThread(self.ytSearch, order, safe, self.lineEditSearch.text()))        
+        self.threadPool.append(GenericThread(self.ytSearch, order, safe, length, _format, maxResult, genre, searchTerm))        
         self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
         self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
         self.threadPool[len(self.threadPool) - 1].start()
@@ -122,9 +179,10 @@ class VideoPlayer(QtGui.QMainWindow):
         
     def setHtml(self, html):
         print "Setting html"
+        print html
         self.videoList.setHtml(html)
         
-    def ytSearch(self, order, safe, vq):
+    def ytSearch(self, order, safe, length, _format, maxResult, genere, searchTerm):
         try:
             # Init service.
             yt_service = gdata.youtube.service.YouTubeService()
@@ -133,7 +191,12 @@ class VideoPlayer(QtGui.QMainWindow):
             query = gdata.youtube.service.YouTubeVideoQuery()    
             query.orderby = order
             query.safeSearch = safe
-            query.vq = str(vq)
+            query.max_results = maxResult
+            if _format != 0:
+                query.format = _format
+            if length != 'all':
+                query.duration = length 
+            query.vq = str(searchTerm)
             
             # Run the query.
             feed = yt_service.YouTubeQuery(query)            
@@ -366,8 +429,57 @@ class VideoPlayer(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btnUpload_clicked(self):
         if not self.logged_in:
-            print "You have to login first"
+            messageBox = WarningDialog.WarningDialog(warning = "You have to log in first", parent = self)
+            messageBox.show()
         else:
+<<<<<<< .mine
+            print "Calling the function upload"
+            # Get the video information.            
+            self.uploadDialog.show()
+            self.connect(self.uploadDialog, QtCore.SIGNAL("accepted()"), self.doUpload)            
+                
+    
+    # Managing the upload queue.
+    def doUpload(self):
+        #upload the file.
+        self.uploadThreadPool.append(GenericThread(self.doRealUpload))
+        self.disconnect(self, QtCore.SIGNAL("doneUpload(QString)"), self.doneUpload)
+        self.connect(self, QtCore.SIGNAL("doneUpload(QString)"), self.doneUpload)
+        self.uploadThreadPool[len(self.uploadThreadPool) - 1].start()
+        self.setFocus()
+    
+    # Do the upload.
+    def doRealUpload(self):   
+        print "Inside the doUpload funtion"     
+        # Get the video's info.
+        filepath = self.uploadDialog.lineEditFilePath.text()
+        title = self.uploadDialog.lineEditVideoName.text()
+        tags = self.uploadDialog.lineEditTags.text()
+        description = self.uploadDialog.plainTextEditDescription.toPlainText()
+        
+        print filepath
+        print title
+        print tags
+        print description
+        
+        # prepare a media group object to hold our video's meta-data
+        print "Constructing a media object - metadata"
+        my_media_group = gdata.media.Group(title=gdata.media.Title(text = title),
+                                           description=gdata.media.Description(description_type='plain',
+                                                                               text= description),
+                                           keywords=gdata.media.Keywords(text= keywords),
+                                           category=[gdata.media.Category(text='Autos', 
+                                                                          scheme='http://gdata.youtube.com/schemas/2007/categories.cat',
+                                                                          label='Autos')],
+                                           player=None)
+        
+        print my_media_group
+        # prepare a geo.where object to hold the geographical location
+        # of where the video was recorded
+        print "Set the location"
+        where = gdata.geo.Where()
+        where.set_location((37.0,-122.0))
+=======
             # Get the video information.
             movie_title = raw_input("Enter video title: ")
             video_file_location = raw_input("Enter path to the file: ")
@@ -388,13 +500,21 @@ class VideoPlayer(QtGui.QMainWindow):
             # of where the video was recorded
             where = gdata.geo.Where()
             where.set_location((37.0,-122.0))
+>>>>>>> .r18
 
-            # create the gdata.youtube.YouTubeVideoEntry to be uploaded
-            video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group, geo=where)
-            new_entry = self.yt_service.InsertVideoEntry(video_entry, video_file_location)
-
-# set the path for the video file binary
-    
+        # create the gdata.youtube.YouTubeVideoEntry to be uploaded
+        print "Creating an entry"
+        video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group, geo=where)
+        print video_entry
+        print "Uploading the video"
+        new_entry = self.yt_service.InsertVideoEntry(video_entry, filepath)
+        self.emit(QtCore.SIGNAL('doneUpload(QString)'), QtCore.QString('Title: ' + title + '\nPath: ' + filepath))
+        
+    # A message notifying upload sucessfully event.
+    def doneUpload(self, message):
+        messageDialog = WarningDialog.WarningDialog("The video % has been successfully uploaded." %str(message))
+        messageDialog.show()
+        
     # Display youtube feeds
     @QtCore.pyqtSlot()
     def on_btnMostViewed_clicked(self):
@@ -456,25 +576,18 @@ class VideoPlayer(QtGui.QMainWindow):
     
     def login(self, email, password):
         # This takes time, so we have to start a thread.
-        print "Starting youtube service"
         yt_service = gdata.youtube.service.YouTubeService()
         yt_service.email = email
         yt_service.password = password
-        print "Setting username and password: done"
         
         # Login.
         try:
-            # API: login.
-            print "Call ProgrammaticLogin()"
-            print yt_service.ProgrammaticLogin()
-            print "After the call"            
+            print yt_service.ProgrammaticLogin()            
         except:
-            #TODO: Display a warning dialog.
-            print "Login failed!"
+            #Display a warning dialog.
             self.logged_in = False
             self.emit(QtCore.SIGNAL('failedLogin()'))
             return
-        print "setting logged_in = True"
         self.yt_service = yt_service
         self.logged_in = True
         self.emit(QtCore.SIGNAL('doneLogin(QString)'), QtCore.QString(email + " " + password))
@@ -483,18 +596,14 @@ class VideoPlayer(QtGui.QMainWindow):
     # User clicked on the 'login' button.
     @QtCore.pyqtSlot()
     def on_btnLogin_clicked(self):
-        print "The 'Loggin button '"     
-        if not self.logged_in:
-            print "Start the login process"
-            
-            # Start a login thread.
-            username = self.ledUsername.text()
-            password = self.ledPassword.text()
-            loginThread = GenericThread(self.login, username, password)
-            self.connect(self, QtCore.SIGNAL("doneLogin(QString)"), self.webLogin)
-            self.connect(self, QtCore.SIGNAL("failedLogin()"), self.failedLoginWarning)
-            print "The login thread is started"
-            loginThread.start()       
+        # Start a login thread.
+        username = self.ledUsername.text()
+        password = self.ledPassword.text()
+        loginThread = GenericThread(self.login, username, password)
+        self.connect(self, QtCore.SIGNAL("doneLogin(QString)"), self.webLogin)
+        self.connect(self, QtCore.SIGNAL("failedLogin()"), self.failedLoginWarning)
+        print "The login thread is started"
+        loginThread.start()       
         
     def webLogin(self, loginInfo):
         #Web login.
@@ -507,8 +616,9 @@ class VideoPlayer(QtGui.QMainWindow):
         self.videoList.load(self.homeURL)
         
     def failedLoginWarning(self):
-        #TODO: display a warning message.
-        print "Login failed."
+        print "Sorry, login failed!" 
+        warningDialog = WarningDialog.WarningDialog(warning = "Sorry, logging in failed", parent = self)
+        warningDialog.show()
             
     
 if __name__ == "__main__":

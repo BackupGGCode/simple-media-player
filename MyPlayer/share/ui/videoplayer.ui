@@ -357,7 +357,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tbPlaylist">
         <attribute name="title">
@@ -490,7 +490,7 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_11">
              <item>
-              <widget class="QRadioButton" name="radioButton">
+              <widget class="QRadioButton" name="rdbDurationAll">
                <property name="text">
                 <string>All</string>
                </property>
@@ -503,7 +503,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton_2">
+              <widget class="QRadioButton" name="rdbDurationShort">
                <property name="text">
                 <string>Short</string>
                </property>
@@ -513,7 +513,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton_3">
+              <widget class="QRadioButton" name="rdbDurationMedium">
                <property name="text">
                 <string>Medium</string>
                </property>
@@ -523,7 +523,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton_4">
+              <widget class="QRadioButton" name="rdbDurationLong">
                <property name="text">
                 <string>Long</string>
                </property>
@@ -594,7 +594,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox">
+            <widget class="QComboBox" name="cbGenre">
              <property name="currentIndex">
               <number>0</number>
              </property>
@@ -730,7 +730,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_2">
+            <widget class="QComboBox" name="cbFormat">
              <item>
               <property name="text">
                <string>00 - All Formats</string>
@@ -991,7 +991,7 @@
         <widget class="QPushButton" name="btnUpload">
          <property name="geometry">
           <rect>
-           <x>30</x>
+           <x>20</x>
            <y>220</y>
            <width>75</width>
            <height>23</height>

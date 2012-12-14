@@ -1,6 +1,5 @@
-import time
+# -*- coding: utf-8 *-*
 import gdata.youtube.service
-from random import randint
 from getHtmlFromFeed import getHtmlFeedDescription
 
 YOUTUBE__CLIENT_ID = 'youtube_interface'
@@ -8,13 +7,14 @@ developer_key = 'AI39si4bqyruGRzmzkrNX1si2Rbj4oYbUcm_RY6A-VmIt9t9gYNRwdfvu540FFf
 
 # A class the allows user to user Youtube services.
 class YouTubeService():
-	def __init__(self, email = '' , password = ''):
+	def __init__(self, email='' , password=''):
 		self.client = gdata.youtube.service.YouTubeService()
-		if email != '' and password != '':			
+		if email != '' and password != '':
+			# Log in to youtube, using the username and password.			
 			self.client.email = email
 			self.client.password = password
 			self.client.ProgrammaticLogin()
-			self.loggedIn  = True
+			self.loggedIn = True
 		else:
 			self.loggedIn = False
 			
@@ -22,6 +22,7 @@ class YouTubeService():
 		self.client.developer_key = developer_key
 		self.client.client_id = YOUTUBE__CLIENT_ID		
 
+	# Retrive the top rated videos.
 	def RetrieveTopRatedVideoFeed(self):
 		feed = self.client.GetTopRatedVideoFeed()
 		return feed;
@@ -58,9 +59,8 @@ class YouTubeService():
 		feed = self.client.GetMostRespondedVideoFeed()
 		return feed;
 		
-	def RetrieveVideoEntryByUri(self):
-		entry = self.client.GetYouTubeVideoEntry(
-				'https://gdata.youtube.com/feeds/videos/Ncakifd_16k')
+	def RetrieveVideoEntryByUri(self, uri):
+		entry = self.client.GetYouTubeVideoEntry(uri)
 		return entry;
 		
 	def RetrieveVideoEntryByVideoId(self, video_id):
@@ -72,7 +72,7 @@ class YouTubeService():
 		return feed;
 
 	def RetrieveUserVideosbyUsername(self, username):
-		feed = self.client.GetYouTubeUserFeed(username)
+		feed = self.client.GetYouTubeUserFeed(username = username)
 		return feed;
 		
 	def SearchWithVideoQuery(self, vq, orderby, racy, max_results):
@@ -82,12 +82,17 @@ class YouTubeService():
 		query.max_results = max_results
 		query.orderby = orderby
 		query.racy = racy
-		print "Beginning search"
 		feed = self.client.YouTubeQuery(query)
-		print "Done searching"
 		return feed;
 
+	# Upload a video.
 	def DirectVideoUpload(self, video_title, description, tags, location):
+		print location, type(location)
+		print video_title, type(video_title)
+		print tags, type(tags)
+		print description, type(description)
+		
+		# Creating a video entry.
 		my_media_group = gdata.media.Group(
 			title=gdata.media.Title(text=video_title),
 			description=gdata.media.Description(description_type='plain', 										text=description),
@@ -105,22 +110,13 @@ class YouTubeService():
 		
 		video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group,
 													geo=where)
-		
-
-		new_entry = self.client.InsertVideoEntry(video_entry, location)
-		
-		# check upload status also
-		upload_status = self.client.CheckUploadStatus(new_entry)
-		print upload_status
-		
-		# sleep for 10 seconds
-		time.sleep(10)
+		self.client.InsertVideoEntry(video_entry, location)
 
 	def DirectVideoUploadWithDeveloperTags(self, video_title, description, developer_tags, tags, video_file_location):
 		my_media_group = gdata.media.Group(
 			title=gdata.media.Title(text=video_title),
 			description=gdata.media.Description(description_type='plain',
-												text=_video_description),
+												text=description),
 			keywords=gdata.media.Keywords(text=tags),
 			category=[gdata.media.Category(
 					text='Autos',
@@ -196,7 +192,7 @@ class YouTubeService():
 		feed = self.client.GetYouTubePlaylistVideoFeed(uri)
 		return feed
 		
-	def AddUpdateAndDeletePlaylist(self, playlist_title, playlist_description):
+	def Add(self, playlist_title, playlist_description):
 		response = self.client.AddPlaylist(playlist_title, playlist_description)
 		print response
 
@@ -237,8 +233,12 @@ class YouTubeService():
 		feed = self.client.GetYouTubeContactFeed(uri)
 		return feed
 
-	def RetrieveContactFeedByUsername(self):
-		feed = self.client.GetYouTubeContactFeed(username='gdpython')
+	def RetrieveContactFeedByUsername(self, username):
+		feed = self.client.GetYouTubeContactFeed(username=username)
 		return feed
-	
+
+if __name__ == '__main__':
+	yt_service = YouTubeService()
+	feed = yt_service.RetrieveUserVideosbyUsername('huynhlv54')	
+	print getHtmlFeedDescription(feed)
 	

@@ -16,9 +16,9 @@ class Video:
 
     # get the link to the Youtube page.
     def getLink(self):
-        return link
+        return self.link
 
     # get the direct link to the video file.
     def getDirectLink(self):
-        return link
+        return self.link
     

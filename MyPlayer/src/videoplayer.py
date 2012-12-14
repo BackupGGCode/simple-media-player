@@ -9,7 +9,6 @@ import sys
 import random
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtWebKit import QWebPage, QWebSettings
-import gdata
 
 # Two additional UI module.
 import about
@@ -20,7 +19,6 @@ import WarningDialog
 from YoutubeService import YouTubeService
 from getHtmlFromFeed import getHtmlFeedDescription
 import getHtmlFromFeed
-import traceback
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -72,6 +70,9 @@ class VideoPlayer(QtGui.QMainWindow):
         # A seperate frame for login.
         self.logged_in = False
         self.yt_service = None
+        
+        # A list of uploading video.
+        self.uploadingList = []
         self.uploadDialog = UploadDialog(self)
     
     # Click a link in the list of videos.
@@ -79,18 +80,31 @@ class VideoPlayer(QtGui.QMainWindow):
         if str(url.toString()).find('youtube') != -1:
             self.addMedia(url)
     
+    def startThread(self, function, signal_ok, signal_fail, function_if_ok, function_if_fail, *args):
+        self.threadPool.append(GenericThread(function, *args))
+        self.disconnect(self, signal_ok, function_if_ok)
+        self.connect(self, signal_ok, function_if_ok)
+        self.disconnect(self, signal_fail, function_if_fail)
+        self.connect(self, signal_fail, function_if_fail)
+        self.threadPool[len(self.threadPool) - 1].start()
+        self.setFocus()
+    
+    def dummy(self):
+        print 'This function do nothing'
+    
     # User's feed.
     @QtCore.pyqtSlot()
     def on_lineeditUserFeed_returnPressed(self):
-        # Start searching.
-        self.threadPool.append(GenericThread(self.ytUserFeedSearch, self.lineeditUserFeed.displayText()))        
-        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.threadPool[len(self.threadPool) - 1].start()
-        self.setFocus()        
+        # Start a thread for searching.
+        self.startThread(self.ytUserFeedSearch,
+                         QtCore.SIGNAL("doneSearching(QString)"), 
+                         QtCore.SIGNAL("searchFailed()"), 
+                         self.setHtml, 
+                         self.dummy,
+                         str(self.lineeditUserFeed.displayText()))        
     
     # Return an instance that helps us to use youtube's services.
-    def getYouTubeService(self, username = '', password = ''):
+    def getYouTubeService(self, username='', password=''):
         if (username != '' and password != ''): # new instance.
                 self.yt_service = YouTubeService(username, password)
                 return self.yt_service
@@ -101,12 +115,14 @@ class VideoPlayer(QtGui.QMainWindow):
             return self.yt_service
     
     def ytUserFeedSearch(self, username):
-        print "Searching for videos by", username
-        yt_service = self.getYouTubeService()
-        feed = yt_service.RetrieveUserVideosbyUsername(username)
-        html = getHtmlFeedDescription(feed)
-        self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
-                
+        try:
+            yt_service = self.getYouTubeService()
+            feed = yt_service.RetrieveUserVideosbyUsername(username)
+            html = getHtmlFeedDescription(feed)
+            print html
+            self.emit(QtCore.SIGNAL('doneSearching(QString)'), QtCore.QString(html))
+        except:
+            print "failed"    
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
@@ -137,12 +153,13 @@ class VideoPlayer(QtGui.QMainWindow):
         # searching not done: Print the defaul message.
         self.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
         
-        # Create a thread to do the search.        
-        self.threadPool.append(GenericThread(self.ytSearch, vq, orderby, racy, max_results))        
-        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.threadPool[len(self.threadPool) - 1].start()
-        self.setFocus()
+        # Create a thread to do the search.
+        self.startThread(self.ytSearch, 
+                         QtCore.SIGNAL("doneSearching(QString)"), 
+                         QtCore.SIGNAL("searchFailed()"), 
+                         self.setHtml,
+                         self.dummy,
+                         vq, orderby, racy, max_results)        
     
     # Set the content of the playlist page.
     def setHtml(self, html):
@@ -156,15 +173,10 @@ class VideoPlayer(QtGui.QMainWindow):
             yt_service = self.getYouTubeService()
             #vq must be converted to str.
             feed = yt_service.SearchWithVideoQuery(str(vq), orderby, racy, max_results)
-            print "Done *******"
         except:
-            print "Error:"
-            traceback.print_last()
             feed = None
         
-        print 'Getting the html'
         html = getHtmlFeedDescription(feed)
-        print html
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
 
     # Event: The 'About' button is clicked
@@ -345,35 +357,45 @@ class VideoPlayer(QtGui.QMainWindow):
                 
     # Managing the upload queue.
     def doUpload(self):
+        print "Inside the function doUpload"
         #upload the file.
-        self.threadPool.append(GenericThread(self.doRealUpload))
-        self.disconnect(self, QtCore.SIGNAL("doneUpload(QString)"), self.doneUpload)
-        self.connect(self, QtCore.SIGNAL("doneUpload(QString)"), self.doneUpload)
-        self.threadPool[len(self.threadPool) - 1].start()
-        self.setFocus()
+        self.startThread(self.doRealUpload, 
+                         QtCore.SIGNAL("doneUpload(QString)"),
+                         QtCore.SIGNAL('uploadFailed(Qstring)'),
+                         self.doneUpload, 
+                         self.uploadFailed)
     
     # Do the upload.
     def doRealUpload(self):        
         # Get the video's info.
-        video_location = self.uploadDialog.lineEditFilePath.text()
-        video_title = self.uploadDialog.lineEditVideoName.text()
-        tags = self.uploadDialog.lineEditTags.text()
-        description = self.uploadDialog.plainTextEditDescription.toPlainText()
+        video_location = str(self.uploadDialog.lineEditFilePath.text())
+        video_title = str(self.uploadDialog.lineEditVideoName.text())
+        tags = str(self.uploadDialog.lineEditTags.text())
+        description = str(self.uploadDialog.plainTextEditDescription.toPlainText())
+        
+        # This will work on Windows only.
+        video_location = video_location.replace('/', '\\')
+        print video_location, type(video_location)
+        print video_title, type(video_title)
+        print tags, type(tags)
+        print description, type(description)
         
         try:
-            yt_service = self.getYouTubeService()
-            yt_service.DirectVideoUpload(self, video_title, description, tags, video_location)
-            self.emit(QtCore.SIGNAL('doneUpload(QString)'), QtCore.QString('Title: ' + video_title + '\nPath: ' + video_location))
+            self.getYouTubeService()
+            self.yt_service.DirectVideoUpload(video_title, description, tags, video_location)
+            self.emit(QtCore.SIGNAL('doneUpload(QString)'), QtCore.QString("done upload!"))
         except:
             self.emit(QtCore.SIGNAL('uploadFailed(Qstring)'), QtCore.QString('^(^$(^(^(^('))
         
     # A message notifying upload sucessfully event.
     def doneUpload(self, message):
-        messageDialog = WarningDialog.WarningDialog("The video % has been successfully uploaded." % str(message))
+        messageDialog = WarningDialog.WarningDialog("The video %s has been successfully uploaded." % str(message))
+        messageDialog.show()
+    def uploadFailed(self, message):
+        messageDialog = WarningDialog.WarningDialog("Upload failed: %s" %str(message))
         messageDialog.show()
         
     # Display youtube feeds
-    
     @QtCore.pyqtSlot()
     def on_btnTopRated_clicked(self):
         self.searchFeed("topRated")
@@ -414,11 +436,12 @@ class VideoPlayer(QtGui.QMainWindow):
     def searchFeed(self, feedName):
         print "Searching", feedName
         # Create a thread to do the search.
-        self.threadPool.append(GenericThread(self.ytFeedSearch, feedName))   
-        self.disconnect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.connect(self, QtCore.SIGNAL("doneSearching(QString)"), self.setHtml)
-        self.threadPool[len(self.threadPool) - 1].start()
-        self.setFocus()
+        self.startThread(self.ytFeedSearch, 
+                         QtCore.SIGNAL("doneSearching(QString)"),
+                         QtCore.SIGNAL("failedSearching(QString)"),
+                         self.setHtml,
+                         self.dummy,
+                         feedName)
     
     def ytFeedSearch(self, feedName):
         yt_service = self.getYouTubeService()
@@ -446,14 +469,19 @@ class VideoPlayer(QtGui.QMainWindow):
         print "Done searching"
         
         html = getHtmlFromFeed.getHtmlFeedDescription(feed)
-        print "html: " + html
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
     
     def login(self, email, password):
+        print "Inside the login function"
+        print email, type(email)
         try:
             self.yt_service = YouTubeService(email, password)
-            self.logged_in = True
-            self.emit(QtCore.SIGNAL("doneLogin(QString)"), email)
+            self.logged_in = self.yt_service.loggedIn
+            if (self.logged_in):
+                self.emit(QtCore.SIGNAL("doneLogin(QString)"), email)
+            else:
+                print "Failed!"
+                self.emit(QtCore.SIGNAL("failedLogin()"))
         except:
             print "Failed!"
             self.emit(QtCore.SIGNAL("failedLogin()"))
@@ -462,19 +490,17 @@ class VideoPlayer(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btnLogin_clicked(self):
         # Start a login thread.
-        username = self.ledUsername.text()
-        password = self.ledPassword.text()
+        username = str(self.ledUsername.text())
+        password = str(self.ledPassword.text())
         
-        self.threadPool.append(GenericThread(self.login, username, password))
-        self.disconnect(self, QtCore.SIGNAL("doneLogin(QString)"), self.setUsernameView)
-        self.connect(self, QtCore.SIGNAL("doneLogin(QString)"), self.setUsernameView)
-        self.disconnect(self, QtCore.SIGNAL("failedLogin()"), self.failedLoginWarning)
-        self.connect(self, QtCore.SIGNAL("failedLogin()"), self.failedLoginWarning)
-        self.threadPool[len(self.threadPool) - 1].start()
-        self.setFocus()
-               
+        self.startThread(self.login,
+                         QtCore.SIGNAL("doneLogin(QString)"),
+                         QtCore.SIGNAL("failedLogin()"),
+                        self.setUsernameView,
+                        self.failedLoginWarning,
+                        username, password)
     
-    #
+    # Show the username.
     def setUsernameView(self, username):
         self.labelGreeting.setText("Hello, %s" % username)
         

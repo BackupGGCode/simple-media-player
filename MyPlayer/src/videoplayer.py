@@ -19,6 +19,7 @@ import WarningDialog
 from YoutubeService import YouTubeService
 from getHtmlFromFeed import getHtmlFeedDescription
 import getHtmlFromFeed
+from searchOption import SearchOptionDialog
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -28,7 +29,7 @@ class VideoPlayer(QtGui.QMainWindow):
         super(VideoPlayer, self).__init__()
         
         # Load the defined UI.
-        uic.loadUi('../share/ui/videoplayer.ui', self)
+        uic.loadUi('../share/ui/new_ui.ui', self)
         self.initAttributes()           
         
     def initAttributes(self):
@@ -44,28 +45,14 @@ class VideoPlayer(QtGui.QMainWindow):
         # Search thread.
         self.threadPool = []
         
-        # Enable the flash plugin
-        QWebSettings.globalSettings().setAttribute(QWebSettings.PluginsEnabled, True)
-        
         # Search box: Enter pressed.
         self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
         
         # The page showing search result.
+        # Enable the flash plugin
+        QWebSettings.globalSettings().setAttribute(QWebSettings.PluginsEnabled, True)
         self.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.videoList.connect(self.videoList, QtCore.SIGNAL('linkClicked(const QUrl&)'), self.linkClicked)
-        
-        # Load the page for Youtube.
-        self.stackedWidget.setCurrentIndex(1)
-        
-        # home page: youtube.com
-        self.homeURL = QtCore.QUrl(r'https://youtube.com')
-        
-        #Load the default page.
-        self.videoList.load(self.homeURL)
-        
-        # Make two webpages share the same session.
-        if not self.videoList.page().networkAccessManager() == None:
-            self.playerView.page().setNetworkAccessManager(self.videoList.page().networkAccessManager())
 
         # A seperate frame for login.
         self.logged_in = False
@@ -74,11 +61,55 @@ class VideoPlayer(QtGui.QMainWindow):
         # A list of uploading video.
         self.uploadingList = []
         self.uploadDialog = UploadDialog(self)
+        self.downloadingList = []
+        
+        self.feed = None # The current feed, displayed on the search result page.
+        self.entry = None # The current entry, playing.
+        
+        # Advance search options
+        self.advancedSearchDialog = SearchOptionDialog(parent = self)
+        self.connect(self.advancedSearchDialog.optionDialogSearchTerm, QtCore.SIGNAL("returnPressed()"), self.advancedSearch)
+        self.connect(self.advancedSearchDialog.lineeditUserFeed, QtCore.SIGNAL("returnPressed()"), self.on_lineeditUserFeed_returnPressed)
+        
+        self.connect(self.advancedSearchDialog.btnTrending , QtCore.SIGNAL("clicked()"), self.on_btnTrending_clicked)
+        self.connect(self.advancedSearchDialog.btnTopRated , QtCore.SIGNAL("clicked()"), self.on_btnTopRated_clicked)
+        self.connect(self.advancedSearchDialog.btnRecentlyFeatured , QtCore.SIGNAL("clicked()"), self.on_btnRecentlyFeatured_clicked)
+        self.connect(self.advancedSearchDialog.btnTopFavorites , QtCore.SIGNAL("clicked()"), self.on_btnTopFavorites_clicked)
+        self.connect(self.advancedSearchDialog.btnMostShared , QtCore.SIGNAL("clicked()"), self.on_btnMostShared_clicked)
+        self.connect(self.advancedSearchDialog.btnMostResponded , QtCore.SIGNAL("clicked()"), self.on_btnMostResponded_clicked)
+        self.connect(self.advancedSearchDialog.btnMostDiscussed , QtCore.SIGNAL("clicked()"), self.on_btnMostDiscussed_clicked)
+        self.connect(self.advancedSearchDialog.btnMostRecent , QtCore.SIGNAL("clicked()"), self.on_btnMostRecent_clicked)
+        self.connect(self.advancedSearchDialog.btnMostPopular , QtCore.SIGNAL("clicked()"), self.on_btnMostPopular_clicked)        
     
+    def getAdvancedSearchOptions(self):
+        vq = str(self.advancedSearchDialog.optionDialogSearchTerm.text())
+        results_number = self.advancedSearchDialog.spbMaxResults.count()
+        sort_by = str(self.advancedSearchDialog.optionDialogSortby.text()).lower()
+        _format = int(str(self.advancedSearchDialog.optionDialogFormat.text())[:2])
+        safe = str(self.advancedSearchDialog.optionDialogSafeSearch.text()).lower()
+        genre = int(str(self.advancedSearchDialog.optionDialogGenre.text())[:2])
+        
+        return [vq, sort_by, safe, genre, results_number]
+    
+    def advancedSearch(self):
+        self.advancedSearchDialog.optionDialogSearchTerm.selectAll()
+        
     # Click a link in the list of videos.
     def linkClicked(self, url):
-        if str(url.toString()).find('youtube') != -1:
-            self.addMedia(url)
+        print url
+        tmp = None
+        # Find the entry that has that url.
+        if (self.feed == None):
+            print "($&(Q&$(&!(&(!&(&ERROR"
+        else:
+            for  entry in self.feed.entry:
+                #print  entry.GetSwfUrl()
+                if entry.GetSwfUrl() == str(url.toString()):
+                    tmp = entry
+                    break
+                    
+        print "Tmp's links: ", tmp.GetSwfUrl()
+        self.addMedia(tmp)
     
     def startThread(self, function, signal_ok, signal_fail, function_if_ok, function_if_fail, *args):
         self.threadPool.append(GenericThread(function, *args))
@@ -96,12 +127,13 @@ class VideoPlayer(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_lineeditUserFeed_returnPressed(self):
         # Start a thread for searching.
+        self.advancedSearchDialog.lineeditUserFeed
         self.startThread(self.ytUserFeedSearch,
                          QtCore.SIGNAL("doneSearching(QString)"), 
                          QtCore.SIGNAL("searchFailed()"), 
                          self.setHtml, 
                          self.dummy,
-                         str(self.lineeditUserFeed.displayText()))        
+                         str(self.advancedSearchDialog.lineeditUserFeed.displayText()))        
     
     # Return an instance that helps us to use youtube's services.
     def getYouTubeService(self, username='', password=''):
@@ -119,36 +151,28 @@ class VideoPlayer(QtGui.QMainWindow):
             yt_service = self.getYouTubeService()
             feed = yt_service.RetrieveUserVideosbyUsername(username)
             html = getHtmlFeedDescription(feed)
-            print html
-            self.emit(QtCore.SIGNAL('doneSearching(QString)'), QtCore.QString(html))
         except:
-            print "failed"    
+            html = "Sorry, no such user."
+            feed = None
+        
+        self.feed = feed        
+        self.emit(QtCore.SIGNAL('doneSearching(QString)'), QtCore.QString(html))
+            
+    # Click on the Search options button.
+    @QtCore.pyqtSlot()
+    def on_btnSearchOption_clicked(self):
+        self.advancedSearchDialog.show()
+        self.advancedSearchDialog.setFocus()
+    
     #Click on the 'search' button in the search tab.
     @QtCore.pyqtSlot()
     def on_btnSearchVideo_clicked(self):
         # Get the order option.
         if self.lineEditSearch.text() == '':
             return    
-        if self.rdbRelevance.isChecked():
-            orderby = "relevance"
-        elif self.rdbPublished.isChecked():
-            orderby = "published"
-        elif self.rdbView.isChecked():
-            orderby = "viewCount"
-        else:
-            orderby = "rating"
-        
-        # Get the safe search option.
-        if self.rdbRacyExclude.isChecked():
-            racy = 'exclude'
-        else:
-            racy = 'include'
-        
-        # Get the search result number.
-        max_results = int(self.spbMaxResults.cleanText())
         
         # get the search term.
-        vq = self.lineEditSearch.text()
+        vq = str(self.lineEditSearch.text())
         
         # searching not done: Print the defaul message.
         self.videoList.setHtml("<html><body><h1>Searching ...</h1></body></html>")
@@ -159,11 +183,12 @@ class VideoPlayer(QtGui.QMainWindow):
                          QtCore.SIGNAL("searchFailed()"), 
                          self.setHtml,
                          self.dummy,
-                         vq, orderby, racy, max_results)        
+                         vq, 'relevance', 'include', 40)        
     
     # Set the content of the playlist page.
     def setHtml(self, html):
         self.videoList.setHtml(html)
+        self.twgWebpage.setCurrentIndex(1)
     
     # Do the search.
     #TODO Re-implement using YoutubeService.
@@ -175,12 +200,12 @@ class VideoPlayer(QtGui.QMainWindow):
             feed = yt_service.SearchWithVideoQuery(str(vq), orderby, racy, max_results)
         except:
             feed = None
-        
+        self.feed = feed
         html = getHtmlFeedDescription(feed)
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
 
     # Event: The 'About' button is clicked
-    @QtCore.pyqtSlot()
+    # Show the about dialog.
     def on_btnAbout_clicked(self):
         ab = about.About(self)
         ab.show()
@@ -299,21 +324,26 @@ class VideoPlayer(QtGui.QMainWindow):
     # Action: Double an item in the play list to play it.
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_lswPlaylist_doubleClicked(self):
+        print "A link is clicked!"
         # If the play list is empty, do nothing.
         if self.playlist == []:
             return
         
         # Get the index of model_index, use it to obtain corresponding link
-        link = self.playlist[self.lswPlaylist.currentRow()];
+        link = self.playlist[self.lswPlaylist.currentRow()].GetSwfUrl();
         
         #Switch to the playerPage
         #Play the selected video.
-        self.stackedWidget.setCurrentIndex(0)
-        self.playerView.load(link)
+        self.twgWebpage.setCurrentIndex(0)
+        html = '<embed src="%s" type="application/x-shockwave-flash" allowfullscreen="true" width="640" height="480"></embed>' % link
+        print html
+        self.playerView.setHtml(html)
 
     # Add to the play a link
-    def addMedia(self, url):
-        self.playlist.append(url)
+    # Url must be a string.
+    def addMedia(self, entry):
+        print "Adding media to playlist."
+        self.playlist.append(entry)
 
         # update the play list.
         self.updatePlayList()
@@ -321,8 +351,10 @@ class VideoPlayer(QtGui.QMainWindow):
         # If the play list has been loaded and there isn't a media playing,
         # play it.
         if len(self.playlist) == 1:
-            self.stackedWidget.setCurrentIndex(0)
-            self.playerView.load(url)
+            print "Starting the play"
+            self.entry = entry
+            self.twgWebpage.setCurrentIndex(0)
+            self.playerView.setHtml(QtCore.QString(self._htmlForFlash(entry.GetSwfUrl())))
         
     # Update the play list.
     def updatePlayList(self):
@@ -331,18 +363,7 @@ class VideoPlayer(QtGui.QMainWindow):
 
         # add the new play list.
         for item in self.playlist:
-            self.lswPlaylist.addItem(item.toString())
-
-    
-    # Select the page vie: Search result of video page.
-    @QtCore.pyqtSlot()
-    def on_showVideoPage_clicked(self):
-        self.stackedWidget.setCurrentIndex(0)
-    
-    # Ask to navigate to search result page.
-    @QtCore.pyqtSlot()
-    def on_showSearchPage_clicked(self):
-        self.stackedWidget.setCurrentIndex(1)
+            self.lswPlaylist.addItem(QtCore.QString(unicode(item.media.title.text)))
         
     @QtCore.pyqtSlot()
     def on_btnUpload_clicked(self):
@@ -395,40 +416,31 @@ class VideoPlayer(QtGui.QMainWindow):
         messageDialog = WarningDialog.WarningDialog("Upload failed: %s" %str(message))
         messageDialog.show()
         
-    # Display youtube feeds
-    @QtCore.pyqtSlot()
+    # Search for popular feeds.
     def on_btnTopRated_clicked(self):
         self.searchFeed("topRated")
     
-    @QtCore.pyqtSlot()
     def on_btnTopFavorites_clicked(self):
         self.searchFeed("topFavorites")
         
-    @QtCore.pyqtSlot()
     def on_btnMostShared_clicked(self):
         self.searchFeed("mostShared")
                 
-    @QtCore.pyqtSlot()
     def on_btnMostPopular_clicked(self):
         self.searchFeed("mostPopular")
     
-    @QtCore.pyqtSlot()
     def on_btnMostRecent_clicked(self):
         self.searchFeed("mostRecent")
     
-    @QtCore.pyqtSlot()
     def on_btnMostDiscussed_clicked(self):
         self.searchFeed("mostDiscussed")
     
-    @QtCore.pyqtSlot()
     def on_btnMostResponded_clicked(self):
         self.searchFeed("mostResponded")
             
-    @QtCore.pyqtSlot()
     def on_btnRecentlyFeatured_clicked(self):
         self.searchFeed("recentlyFeatured")
     
-    @QtCore.pyqtSlot()
     def on_btnTrending_clicked(self):
         self.searchFeed("trending")
     
@@ -466,8 +478,8 @@ class VideoPlayer(QtGui.QMainWindow):
         else:
             feed = None
             print 'Invalid feed'            
-        print "Done searching"
         
+        self.feed = feed
         html = getHtmlFromFeed.getHtmlFeedDescription(feed)
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
     
@@ -485,6 +497,23 @@ class VideoPlayer(QtGui.QMainWindow):
         except:
             print "Failed!"
             self.emit(QtCore.SIGNAL("failedLogin()"))
+            
+    
+    #User clicked on the 
+    @QtCore.pyqtSlot()
+    def on_btnPost_clicked(self):
+        print "Post comments here."
+    
+    @QtCore.pyqtSlot()
+    def on_btnRate_clicked(self):
+        print "Rate the current video here!"
+    
+    @QtCore.pyqtSlot()
+    def on_btnSelectToPlay_clicked(self):
+        print "Choose media numbers and add to play list."
+    @QtCore.pyqtSlot()
+    def on_btnSelectToDownload_clicked(self):
+        print "Choosing media to download."
         
     # User clicked on the 'login' button.
     @QtCore.pyqtSlot()
@@ -508,7 +537,12 @@ class VideoPlayer(QtGui.QMainWindow):
         print "Sorry, login failed!" 
         warningDialog = WarningDialog.WarningDialog(warning="Sorry, logging in failed", parent=self)
         warningDialog.show()
-               
+    
+    def _htmlForFlash(self, url):
+        html = ''''<embed src="%s" type="application/x-shockwave-flash" allowfullscreen="true" width="640" height="480"></embed>
+        ''' % url
+        
+        return html
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     app.setApplicationName('Simple player')

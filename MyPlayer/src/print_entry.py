@@ -6,7 +6,7 @@ import get_specific_entry
 # Print the information about an entry in html form.
 def getHtmlEntry(entry):
     try:
-        url = entry.media.player.url
+        url = entry.GetSwfUrl()
     except:
         url = ""
     try:
@@ -36,8 +36,7 @@ def getHtmlEntry(entry):
     try:
         rating = entry.rating.average                        
     except:
-        rating = "N/A"
-    
+        rating = "N/A"    
     html = '''
     <a href="%s">%s</a>
     <table>

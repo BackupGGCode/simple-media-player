@@ -20,6 +20,9 @@ from YoutubeService import YouTubeService
 from getHtmlFromFeed import getHtmlFeedDescription
 import getHtmlFromFeed
 from searchOption import SearchOptionDialog
+from atom import IdFromString
+from print_entry import getVideoId
+from parseYouTubePage import parseYouTubePage
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -53,6 +56,7 @@ class VideoPlayer(QtGui.QMainWindow):
         QWebSettings.globalSettings().setAttribute(QWebSettings.PluginsEnabled, True)
         self.videoList.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.videoList.connect(self.videoList, QtCore.SIGNAL('linkClicked(const QUrl&)'), self.linkClicked)
+        self.playerView.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
 
         # A seperate frame for login.
         self.logged_in = False
@@ -330,14 +334,12 @@ class VideoPlayer(QtGui.QMainWindow):
             return
         
         # Get the index of model_index, use it to obtain corresponding link
-        link = self.playlist[self.lswPlaylist.currentRow()].GetSwfUrl();
+        self.entry = self.playlist[self.lswPlaylist.currentRow()]
         
         #Switch to the playerPage
         #Play the selected video.
         self.twgWebpage.setCurrentIndex(0)
-        html = '<embed src="%s" type="application/x-shockwave-flash" allowfullscreen="true" width="640" height="480"></embed>' % link
-        print html
-        self.playerView.setHtml(html)
+        self.playerView.setHtml(parseYouTubePage(self.entry.media.player.url))
 
     # Add to the play a link
     # Url must be a string.
@@ -354,7 +356,7 @@ class VideoPlayer(QtGui.QMainWindow):
             print "Starting the play"
             self.entry = entry
             self.twgWebpage.setCurrentIndex(0)
-            self.playerView.setHtml(QtCore.QString(self._htmlForFlash(entry.GetSwfUrl())))
+            self.playerView.setHtml(parseYouTubePage(self.entry.media.player.url))
         
     # Update the play list.
     def updatePlayList(self):

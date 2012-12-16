@@ -166,6 +166,7 @@ class YouTubeService():
 		return feed;
 
 	def RetrieveVideoCommentFeedByVideoId(self, video_id):
+		print "Id = %s" % video_id
 		feed = self.client.GetYouTubeVideoCommentFeed(video_id=video_id)
 		return feed;
 

@@ -15,37 +15,10 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0" colspan="4">
-     <widget class="Line" name="line_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>507</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="4" rowspan="4">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="1">
-     <widget class="QPushButton" name="btnSearchOption">
+     <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>Advanced</string>
+       <string>Search options</string>
       </property>
      </widget>
     </item>
@@ -89,6 +62,33 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="4" rowspan="4">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>507</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0" colspan="4">
+     <widget class="Line" name="line_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
     <item row="3" column="0" colspan="4">
      <widget class="QTabWidget" name="twgWebpage">
       <property name="currentIndex">
@@ -99,6 +99,15 @@
         <string>Video Player</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0" colspan="5">
+         <widget class="QWebView" name="playerView">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0" colspan="6">
          <widget class="Line" name="line_6">
           <property name="orientation">
@@ -209,15 +218,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0" colspan="6">
-         <widget class="QWebView" name="playerView">
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tbSearchResult">
@@ -269,14 +269,14 @@
          </widget>
         </item>
         <item row="2" column="3">
-         <widget class="QPushButton" name="btnSelectToPlay">
+         <widget class="QPushButton" name="pushButton_3">
           <property name="text">
            <string>Add to play list</string>
           </property>
          </widget>
         </item>
         <item row="2" column="4">
-         <widget class="QPushButton" name="btnSelectToDownload">
+         <widget class="QPushButton" name="pushButton_4">
           <property name="text">
            <string>Download</string>
           </property>
@@ -539,20 +539,30 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="6" colspan="2">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
+     <item row="9" column="2">
+      <widget class="QPushButton" name="btnAddMedia">
+       <property name="maximumSize">
         <size>
-         <width>144</width>
-         <height>20</height>
+         <width>48</width>
+         <height>24</height>
         </size>
        </property>
-      </spacer>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>Add media</string>
+       </property>
+       <property name="whatsThis">
+        <string>Add media to playlist</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../icons/list-add.png</normaloff>../icons/list-add.png</iconset>
+       </property>
+      </widget>
      </item>
-     <item row="9" column="2">
+     <item row="9" column="3">
       <widget class="QPushButton" name="btnShufflePlayList">
        <property name="maximumSize">
         <size>
@@ -581,7 +591,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="3">
+     <item row="9" column="4">
       <widget class="QPushButton" name="btnRemoveMedia">
        <property name="maximumSize">
         <size>
@@ -604,7 +614,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="4">
+     <item row="9" column="5">
       <widget class="QPushButton" name="btnClearPlayList">
        <property name="maximumSize">
         <size>
@@ -626,6 +636,19 @@
          <normaloff>../icons/edit-clear.png</normaloff>../icons/edit-clear.png</iconset>
        </property>
       </widget>
+     </item>
+     <item row="9" column="6" colspan="2">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>144</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
     <widget class="QWidget" name="widget" native="true">

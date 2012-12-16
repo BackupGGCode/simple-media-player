@@ -2,6 +2,7 @@
 # Last edited: 11-09/2012
 
 import get_specific_entry
+import re
 
 # Print the information about an entry in html form.
 def getHtmlEntry(entry):
@@ -56,6 +57,21 @@ def getHtmlEntry(entry):
     ''' %(url, title, thumbnail, published, keywords, duration, viewCount, rating)
     
     return html
+               
+def getVideoId(entry):
+    print "entry.text =", entry.id.text
+    m = re.search(r'http://gdata.youtube.com/feeds/api/videos/(\w+)$', entry.id.text)
+    if m:
+        youtube_id = m.group(1)
+    else:
+        m = re.search(r'http://gdata.youtube.com/feeds/videos/(\w+)$', entry.id.text)
+        if m:
+            youtube_id = m.group(1)
+        else:
+            print "An error has occured!"
+            youtube_id = None
+    return youtube_id
+            
 
 if __name__ == '__main__':
     print "Getting entry"
@@ -63,7 +79,8 @@ if __name__ == '__main__':
     
     print "Processing"
     # Print the entry information.
-    print getHtmlEntry(entry)
+    #print getHtmlEntry(entry)
     
+    print "The ID of that video is:", getVideoId(entry)
     
             

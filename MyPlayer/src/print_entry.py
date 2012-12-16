@@ -60,11 +60,11 @@ def getHtmlEntry(entry):
                
 def getVideoId(entry):
     print "entry.text =", entry.id.text
-    m = re.search(r'http://gdata.youtube.com/feeds/api/videos/(\w+)$', entry.id.text)
+    m = re.search(r'http://gdata.youtube.com/feeds/api/videos/(.+)$', entry.id.text)
     if m:
         youtube_id = m.group(1)
     else:
-        m = re.search(r'http://gdata.youtube.com/feeds/videos/(\w+)$', entry.id.text)
+        m = re.search(r'http://gdata.youtube.com/feeds/videos/(.+)$', entry.id.text)
         if m:
             youtube_id = m.group(1)
         else:
@@ -75,7 +75,7 @@ def getVideoId(entry):
 
 if __name__ == '__main__':
     print "Getting entry"
-    entry = get_specific_entry.GetEntry(video_id='the0KZLEacs')
+    entry = get_specific_entry.GetEntry(video_id='cCe-2eH8gBM')
     
     print "Processing"
     # Print the entry information.

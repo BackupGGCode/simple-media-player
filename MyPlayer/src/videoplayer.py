@@ -96,7 +96,9 @@ class VideoPlayer(QtGui.QMainWindow):
         return [vq, sort_by, safe, genre, results_number]
     
     def advancedSearch(self):
+        option = self.getAdvancedSearchOptions()
         self.advancedSearchDialog.optionDialogSearchTerm.selectAll()
+        print option
         
     # Click a link in the list of videos.
     def linkClicked(self, url):
@@ -486,6 +488,9 @@ class VideoPlayer(QtGui.QMainWindow):
         self.emit(QtCore.SIGNAL('doneSearching(QString)'), html)
     
     def login(self, email, password):
+        '''
+        Log in to YouTube, using an email and password. 
+        '''
         print "Inside the login function"
         print email, type(email)
         try:
@@ -494,21 +499,57 @@ class VideoPlayer(QtGui.QMainWindow):
             if (self.logged_in):
                 self.emit(QtCore.SIGNAL("doneLogin(QString)"), email)
             else:
-                print "Failed!"
                 self.emit(QtCore.SIGNAL("failedLogin()"))
         except:
-            print "Failed!"
             self.emit(QtCore.SIGNAL("failedLogin()"))
             
     
-    #User clicked on the 
     @QtCore.pyqtSlot()
     def on_btnPost_clicked(self):
-        print "Post comments here."
+        '''
+        Post a comment to the current video.
+        If the user has logged in, post a comment, otherwise display a warning message.
+        '''
+        if self.yt_service == None or self.yt_service.loggedIn == False:
+            messageBox = WarningDialog.WarningDialog("Sorry, you have to log in first.", self)
+            messageBox.show()            
+        else:
+            #Get the in the textEditComment
+            text = str(self.textEditComment.toPlainText())
+            print "You want to post a comment:", text
+            self.startThread(self.postComment, QtCore.SIGNAL("donePostComment()"), QtCore.SIGNAL("failedPostComment()"), self.dummy, self.dummy, text)
+            
+    def postComment(self, comment):
+        '''
+        Post a comment to the playing video.
+        '''
+        try:
+            self.yt_service.AddComment(getVideoId(self.entry), comment)
+            self.emit(QtCore.SIGNAL("donePostComment()"))
+        except:
+            self.emit("failedPostComment()")
     
     @QtCore.pyqtSlot()
     def on_btnRate_clicked(self):
-        print "Rate the current video here!"
+        '''
+        Handle the event that the user click on the 'Rate' button.
+        '''
+        if self.logged_in:
+            self.startThread(self.addRating, QtCore.SIGNAL("doneAddRating()"), QtCore.SIGNAL("failedAddRating()"), self.dummy, self.dummy)
+        else:
+            message = WarningDialog.WarningDialog("Sorry, you have to log in first.", self)
+            message.showNormal()
+            
+    def addRating(self):
+        '''
+        Rate the current (playing) video.
+        '''
+        number = self.value()
+        try:
+            self.yt_service.AddRating(getVideoId(self.entry), number)
+            self.emit(QtCore.SIGNAL("doneAddRating()"))
+        except:
+            self.emit(QtCore.SIGNAL("failedAddRating()"))
     
     @QtCore.pyqtSlot()
     def on_btnSelectToPlay_clicked(self):

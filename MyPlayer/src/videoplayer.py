@@ -20,7 +20,6 @@ from YoutubeService import YouTubeService
 from getHtmlFromFeed import getHtmlFeedDescription
 import getHtmlFromFeed
 from searchOption import SearchOptionDialog
-from atom import IdFromString
 from print_entry import getVideoId
 from parseYouTubePage import parseYouTubePage
 
@@ -36,10 +35,17 @@ class VideoPlayer(QtGui.QMainWindow):
         self.initAttributes()           
         
     def initAttributes(self):
-        self.showMaximized()
         # Initialize the play list.
         self.playlist = [] # A list of links to the file to play.
         self.playlistTmp = [] # A temporary play list, use to shuffle play list.
+        # A list of uploading video.
+        self.uploadingList = []
+        self.uploadDialog = UploadDialog(self)
+        self.downloadingList = []
+
+        self.feed = None # The current feed, displayed on the search result page.
+        self.entry = None # The current entry, playing.
+        
         
         # The dock widget: show or hide?
         self.dckShown = True
@@ -47,6 +53,7 @@ class VideoPlayer(QtGui.QMainWindow):
         
         # Search thread.
         self.threadPool = []
+        self.threadType = [] # Store the function names that run as threads in self.threadPool.
         
         # Search box: Enter pressed.
         self.lineEditSearch.returnPressed.connect(self.on_btnSearchVideo_clicked)
@@ -61,14 +68,6 @@ class VideoPlayer(QtGui.QMainWindow):
         # A seperate frame for login.
         self.logged_in = False
         self.yt_service = None
-        
-        # A list of uploading video.
-        self.uploadingList = []
-        self.uploadDialog = UploadDialog(self)
-        self.downloadingList = []
-        
-        self.feed = None # The current feed, displayed on the search result page.
-        self.entry = None # The current entry, playing.
         
         # Advance search options
         self.advancedSearchDialog = SearchOptionDialog(parent = self)
@@ -85,6 +84,38 @@ class VideoPlayer(QtGui.QMainWindow):
         self.connect(self.advancedSearchDialog.btnMostRecent , QtCore.SIGNAL("clicked()"), self.on_btnMostRecent_clicked)
         self.connect(self.advancedSearchDialog.btnMostPopular , QtCore.SIGNAL("clicked()"), self.on_btnMostPopular_clicked)        
     
+        # Menu bar actions.
+        self.action_Save_playlist.triggered.connect(self.on_action_Save_playlist)
+        self.action_Load_playlist.triggered.connect(self.on_action_Load_playlist)
+        self.action_Open_download_folder.triggered.connect(self.on_action_Open_download_folder)
+        self.action_Quit.triggered.connect(self.on_action_Quit)
+        self.action_Guide.triggered.connect(self.on_action_Guide)
+        self.action_About.triggered.connect(self.on_action_About)
+        self.actionS_earch_option.triggered.connect(self.on_actionS_earch_option)
+        
+    # Some menu action.
+    def on_action_Save_playlist(self):
+        print "Do save playlist here."
+    
+    def on_action_Load_playlist(self):
+        print "Load playlist here."
+    
+    def on_action_Open_download_folder(self):
+        print "Open download folder here."
+    
+    def on_action_Quit(self):
+        self.close()
+        
+    def on_actionS_earch_option(self):
+        print "Setting search option here!"
+        
+    def on_action_Guide(self):
+        print "Guide here."
+        
+    def on_action_About(self):
+        aboutDialog = about.About(parent = self)
+        aboutDialog.show()
+        
     def getAdvancedSearchOptions(self):
         vq = str(self.advancedSearchDialog.optionDialogSearchTerm.text())
         results_number = self.advancedSearchDialog.spbMaxResults.count()
@@ -117,12 +148,34 @@ class VideoPlayer(QtGui.QMainWindow):
         print "Tmp's links: ", tmp.GetSwfUrl()
         self.addMedia(tmp)
     
-    def startThread(self, function, signal_ok, signal_fail, function_if_ok, function_if_fail, *args):
-        self.threadPool.append(GenericThread(function, *args))
+    def startThread(self, function, signal_ok, signal_fail, function_if_ok, function_if_fail, *args):        
+        # Connect signals and slots.
         self.disconnect(self, signal_ok, function_if_ok)
         self.connect(self, signal_ok, function_if_ok)
         self.disconnect(self, signal_fail, function_if_fail)
         self.connect(self, signal_fail, function_if_fail)
+        
+        #Start this thread.
+        # Stop all the thread of the same type as this thread first.
+        name = function.__name__.lower()        
+        if name.find('search') != -1 or name.find('setplayerpage') != -1:
+            # Thread of this type should not run concurrently.
+            # Stop all previous thread of this type.
+            for count in range(0, len(self.threadPool)):
+                if self.threadType[count] == name:
+                    # Stop this thread first.
+                    if self.threadPool[count].stopped():
+                        print "This thread (%s) is stopped already" % count
+                    else:
+                        try:
+                            print "Stopping thread number", count
+                            self.threadPool[count].stop()
+                        except:
+                            pass
+        
+        # Update the thread pool
+        self.threadPool.append(GenericThread(function, *args))
+        self.threadType.append(name)
         self.threadPool[len(self.threadPool) - 1].start()
         self.setFocus()
     
@@ -191,6 +244,11 @@ class VideoPlayer(QtGui.QMainWindow):
                          self.dummy,
                          vq, 'relevance', 'include', 40)        
     
+    
+    def setVideoPlayerPage(self, html):
+        self.playerView.setHtml(html)
+        self.twgWebpage.setCurrentIndex(0)
+        
     # Set the content of the playlist page.
     def setHtml(self, html):
         self.videoList.setHtml(html)
@@ -330,7 +388,6 @@ class VideoPlayer(QtGui.QMainWindow):
     # Action: Double an item in the play list to play it.
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_lswPlaylist_doubleClicked(self):
-        print "A link is clicked!"
         # If the play list is empty, do nothing.
         if self.playlist == []:
             return
@@ -340,9 +397,19 @@ class VideoPlayer(QtGui.QMainWindow):
         
         #Switch to the playerPage
         #Play the selected video.
-        self.twgWebpage.setCurrentIndex(0)
-        self.playerView.setHtml(parseYouTubePage(self.entry.media.player.url))
-
+        print "Getting the webpage,", self.entry.media.player.url
+        self.startThread(self.setPlayerPage, QtCore.SIGNAL("doneSettingPlayerPage(QString)"), QtCore.SIGNAL("failedSettingPlayerPage(QString)"), self.setVideoPlayerPage, self.dummy, self.entry.media.player.url)
+    
+    def setPlayerPage(self, url):
+        print "Inside the function setPlayerPage"
+        print "url =", url
+        print "Getting the content."
+        html = parseYouTubePage(url)
+        print "Getting the content: done"
+        self.emit(QtCore.SIGNAL("doneSettingPlayerPage(QString)"), QtCore.QString(html))        
+        
+        
+        
     # Add to the play a link
     # Url must be a string.
     def addMedia(self, entry):
@@ -357,8 +424,7 @@ class VideoPlayer(QtGui.QMainWindow):
         if len(self.playlist) == 1:
             print "Starting the play"
             self.entry = entry
-            self.twgWebpage.setCurrentIndex(0)
-            self.playerView.setHtml(parseYouTubePage(self.entry.media.player.url))
+            self.startThread(self.setPlayerPage, QtCore.SIGNAL("doneSettingPlayerPage(QString)"), QtCore.SIGNAL("failedSettingPlayerPage(QString)"), self.setVideoPlayerPage, self.dummy, self.entry.media.player.url)
         
     # Update the play list.
     def updatePlayList(self):

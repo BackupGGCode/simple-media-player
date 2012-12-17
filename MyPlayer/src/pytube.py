@@ -4,6 +4,7 @@ from urllib2 import urlopen
 from urlparse import urlparse, parse_qs
 
 import re
+import sys
 
 YT_BASE_URL = 'http://www.youtube.com/get_video_info'
 
@@ -356,3 +357,9 @@ def safe_filename(text, max_length=200):
     blacklist = re.compile('|'.join(ntfs + paranoid), re.UNICODE)
     filename = blacklist.sub('', text)
     return truncate(filename)
+
+if __name__ == '__main__':
+    url = sys.argv[1]
+    res= sys.argv[2]
+    extension = sys.argv[3]
+    video = Video(url)

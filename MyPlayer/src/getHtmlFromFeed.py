@@ -11,11 +11,11 @@ def getHtmlFeedDescription(feed):
     <body>
     '''
     #html = '<html><head><meta http-equiv="Content-Type" content="text/html"; "charset=utf-8"><title>Search Result</title></head><body><ol>'
-    try:
-        for entry in feed.entry:
-            html += u"<li>%s</li>" % print_entry.getHtmlEntry(entry)
-    except:
-        html += u'<font color="red">Getting search result: Error'
+    for entry in feed.entry:
+        print print_entry.getHtmlEntry(entry)
+        html += "<li>".decode('utf8') + unicode(print_entry.getHtmlEntry(entry)) + "</li>".decode('utf8')
+    
+        #html += u'<font color="red">Getting search result: Error'
     html += u"</ol></body></html>"
     
     return html               

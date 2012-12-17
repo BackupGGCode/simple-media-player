@@ -1,5 +1,4 @@
 # -*- coding: utf-8 *-*
-from PyQt4 import QtCore
 import threading
 
 # A generic thread class.
@@ -20,6 +19,7 @@ import threading
 #    def run(self):
 #        self.function(*self.args,**self.kwargs)
 
+#This type of thread is stoppable!
 class GenericThread(threading.Thread):
     def __init__(self, function, *args, **kwargs):
         super(GenericThread, self).__init__()

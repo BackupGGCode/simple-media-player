@@ -6,39 +6,40 @@ import re
 
 # Print the information about an entry in html form.
 def getHtmlEntry(entry):
+    print "In the file getHtmlEntry"
     try:
         url = entry.GetSwfUrl()
     except:
         url = ""
     try:
-        title = entry.media.title.text
+        title = unicode(entry.media.title.text)
     except:
-        title = " "
+        title = u""
     try:            
         thumbnail =  entry.media.thumbnail[0].url
     except:
         thumbnail = ""
     try:  
-        published = entry.published.text
+        published = unicode(entry.published.text)
     except:
-        published = "N/A"
+        published = u"N/A"
     try:
-        keywords = entry.media.keywords.text
+        keywords = unicode(entry.media.keywords.text)
     except:
-        keywords = "N/A"
+        keywords = unicode("N/A")
     try:
-        duration = entry.media.duration.seconds
+        duration = unicode(entry.media.duration.seconds)
     except:
-        duration = "0"
+        duration = u"0"
     try:
-        viewCount = entry.statistics.view_count
+        viewCount = unicode(entry.statistics.view_count)
     except:
-        viewCount = "N/A"
+        viewCount = u"N/A"
     try:
-        rating = entry.rating.average                        
+        rating = unicode(entry.rating.average)                        
     except:
-        rating = "N/A"    
-    html = '''
+        rating = u"N/A"    
+    html = u'''
     <a href="%s">%s</a>
     <table>
         <tr>
@@ -82,5 +83,6 @@ if __name__ == '__main__':
     #print getHtmlEntry(entry)
     
     print "The ID of that video is:", getVideoId(entry)
+    print getHtmlEntry(entry)
     
             

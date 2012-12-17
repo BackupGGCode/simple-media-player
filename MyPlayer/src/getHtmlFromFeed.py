@@ -12,10 +12,10 @@ def getHtmlFeedDescription(feed):
     '''
     #html = '<html><head><meta http-equiv="Content-Type" content="text/html"; "charset=utf-8"><title>Search Result</title></head><body><ol>'
     for entry in feed.entry:
-        print print_entry.getHtmlEntry(entry)
-        html += "<li>".decode('utf8') + unicode(print_entry.getHtmlEntry(entry)) + "</li>".decode('utf8')
-    
-        #html += u'<font color="red">Getting search result: Error'
+        try:
+            html += "<li>".decode('utf8') + unicode(print_entry.getHtmlEntry(entry)) + "</li>".decode('utf8')
+        except:
+            pass
     html += u"</ol></body></html>"
     
     return html               

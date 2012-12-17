@@ -6,7 +6,6 @@ import re
 
 # Print the information about an entry in html form.
 def getHtmlEntry(entry):
-    print "In the file getHtmlEntry"
     try:
         url = entry.GetSwfUrl()
     except:
@@ -80,7 +79,7 @@ if __name__ == '__main__':
     
     print "Processing"
     # Print the entry information.
-    #print getHtmlEntry(entry)
+    # print getHtmlEntry(entry)
     
     print "The ID of that video is:", getVideoId(entry)
     print getHtmlEntry(entry)

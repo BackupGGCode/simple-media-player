@@ -24,6 +24,9 @@ from print_entry import getVideoId
 from parseYouTubePage import parseYouTubePage
 from upload_status import UploadStatusDialog
 import time
+import webbrowser
+import pickle
+import gdata
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -37,6 +40,8 @@ class VideoPlayer(QtGui.QMainWindow):
         self.initAttributes()           
         
     def initAttributes(self):
+        self.showMaximized()
+
         # Initialize the play list.
         self.playlist = [] # A list of links to the file to play.
         self.playlistTmp = [] # A temporary play list, use to shuffle play list.
@@ -99,10 +104,47 @@ class VideoPlayer(QtGui.QMainWindow):
         
     # Some menu action.
     def on_action_Save_playlist(self):
-        print "Do save playlist here."
+        if self.playlist is None or len(self.playlist) == 0:
+            warning = WarningDialog.WarningDialog("There is nothing to save!", self)
+            warning.show()
+        else:
+            # Create a dialog showing the place to save the playlist.
+            file_types = "Playlist (*.playlist);; All file (*.*)"
+            filename, filter = QtGui.QFileDialog.getSaveFileNameAndFilter(self, QtCore.QString("Save play list"), '', file_types)
+            filename = unicode(filename.__str__())
+            try:
+                # save the playlist.
+                playlist_file = open(filename, 'wb')
+                pickle.dump(self.playlist, playlist_file)
+                playlist_file.close()
+                print "The play list is saved."
+            except:
+                warning = WarningDialog.WarningDialog("Sorry, the play list cannot be saved!", self)
+                warning.show()
     
     def on_action_Load_playlist(self):
-        print "Load playlist here."
+        # Create a file dialog to load the playlist.
+        file_types = "Playlist (*.playlist);; All file (*.*)"
+        filename, filter = QtGui.QFileDialog.getOpenFileNameAndFilter(self, QtCore.QString("Load play list"), '', file_types)
+        filename = unicode(filename.__str__())
+        
+        playlist_file = open(filename, 'rb')
+        temp_playlist = pickle.load(playlist_file)
+        if temp_playlist is None or not isinstance(temp_playlist, list):
+            raise ValueError
+        self.playlist = []
+        for entry in temp_playlist:
+            # Check the validity of the entry.
+            if isinstance(entry, gdata.youtube.YouTubeVideoEntry):
+                self.playlist.append(entry)
+            # update the playlist.
+        self.updatePlayList()
+        #except:
+        #    warning = WarningDialog.WarningDialog("Sorry, the play list cannot be loaded!", self)
+        #    warning.show()
+        #finally:
+        playlist_file.close()
+        
     
     def on_action_Open_download_folder(self):
         print "Open download folder here."
@@ -114,7 +156,7 @@ class VideoPlayer(QtGui.QMainWindow):
         print "Setting search option here!"
         
     def on_action_Guide(self):
-        print "Guide here."
+        webbrowser.open(r'https://code.google.com/p/simple-media-player/w/list')
         
     def on_action_About(self):
         aboutDialog = about.About(parent = self)
@@ -165,7 +207,8 @@ class VideoPlayer(QtGui.QMainWindow):
         if name.find('search') != -1 or name.find('setplayerpage') != -1:
             # Thread of this type should not run concurrently.
             # Stop all previous thread of this type.
-            for count in range(0, len(self.threadPool)):
+            count = len(self.threadPool) - 1
+            while count >= 0:
                 if self.threadType[count] == name:
                     # Stop this thread first.
                     if self.threadPool[count].stopped():
@@ -176,6 +219,8 @@ class VideoPlayer(QtGui.QMainWindow):
                             self.threadPool[count].stop()
                         except:
                             pass
+                    break
+                count -= 1
         
         # Update the thread pool
         self.threadPool.append(GenericThread(function, *args))
@@ -418,6 +463,7 @@ class VideoPlayer(QtGui.QMainWindow):
     # Url must be a string.
     def addMedia(self, entry):
         print "Adding media to playlist."
+        print "The type of the entry to be added: ", type(entry)
         self.playlist.append(entry)
 
         # update the play list.
@@ -667,6 +713,7 @@ class VideoPlayer(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def on_btnLogout_clicked(self):
         self.yt_service = YouTubeService()
+        self.logged_in = False
         self.labelGreeting.setText('Hello')
         
     # Show the username.

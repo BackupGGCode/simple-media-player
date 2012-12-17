@@ -22,6 +22,8 @@ import getHtmlFromFeed
 from searchOption import SearchOptionDialog
 from print_entry import getVideoId
 from parseYouTubePage import parseYouTubePage
+from upload_status import UploadStatusDialog
+import time
 
 # A class represent a simple media player.
 class VideoPlayer(QtGui.QMainWindow):
@@ -39,7 +41,7 @@ class VideoPlayer(QtGui.QMainWindow):
         self.playlist = [] # A list of links to the file to play.
         self.playlistTmp = [] # A temporary play list, use to shuffle play list.
         # A list of uploading video.
-        self.uploadingList = []
+        self.uploadingList = {}
         self.uploadDialog = UploadDialog(self)
         self.downloadingList = []
 
@@ -92,6 +94,8 @@ class VideoPlayer(QtGui.QMainWindow):
         self.action_Guide.triggered.connect(self.on_action_Guide)
         self.action_About.triggered.connect(self.on_action_About)
         self.actionS_earch_option.triggered.connect(self.on_actionS_earch_option)
+        
+        self.btnLogout.setEnabled(False)
         
     # Some menu action.
     def on_action_Save_playlist(self):
@@ -450,14 +454,7 @@ class VideoPlayer(QtGui.QMainWindow):
     def doUpload(self):
         print "Inside the function doUpload"
         #upload the file.
-        self.startThread(self.doRealUpload, 
-                         QtCore.SIGNAL("doneUpload(QString)"),
-                         QtCore.SIGNAL('uploadFailed(Qstring)'),
-                         self.doneUpload, 
-                         self.uploadFailed)
-    
-    # Do the upload.
-    def doRealUpload(self):        
+        
         # Get the video's info.
         video_location = str(self.uploadDialog.lineEditFilePath.text())
         video_title = str(self.uploadDialog.lineEditVideoName.text())
@@ -470,21 +467,50 @@ class VideoPlayer(QtGui.QMainWindow):
         print video_title, type(video_title)
         print tags, type(tags)
         print description, type(description)
+        print "trying..."
         
+        # Show an upload dialog.
+        uploadDialog = UploadStatusDialog('Uploading', video_title, video_location, self)
+        uploadDialog.show()
+        self.startThread(self.doRealUpload, 
+                         QtCore.SIGNAL("doneUpload(QString)"),
+                         QtCore.SIGNAL('uploadFailed(QString)'),
+                         self.doneUpload, 
+                         self.uploadFailed, video_title, description, tags, video_location, uploadDialog)
+    
+    # Do the upload.
+    def doRealUpload(self, video_title, description, tags, video_location, uploadDialog):
+        print  "doRealUPload"     
         try:
             self.getYouTubeService()
-            self.yt_service.DirectVideoUpload(video_title, description, tags, video_location)
-            self.emit(QtCore.SIGNAL('doneUpload(QString)'), QtCore.QString("done upload!"))
+            new_entry = self.yt_service.DirectVideoUpload(video_title, description, tags, video_location)
+            self.emit(QtCore.SIGNAL('doneUpload(QString)'), QtCore.QString(video_location))
+            # Setting the upload dialog.
+            uploadDialog.lbStatus.setText(QtCore.QString('Video uploaded. Waiting for YouTube\'s acceptance.'))
+            
+            # Wait and check for Youtube Status.
+            for i in range(10):# wait for at most 10 * 30 seconds.
+                time.sleep(30)
+                uploadStatus = self.yt_service.client.CheckUploadStatus(new_entry)
+                if uploadStatus is not None:
+                    status = str(uploadStatus[0])
+                    print status
+                    uploadDialog.lbStatus.setText(QtCore.QString(status))
+                else:
+                    uploadDialog.lbStatus.setText(QtCore.QString("Done."))
+                    break
         except:
-            self.emit(QtCore.SIGNAL('uploadFailed(Qstring)'), QtCore.QString('^(^$(^(^(^('))
+            self.emit(QtCore.SIGNAL('uploadFailed(QString)'), QtCore.QString(video_location))
+            uploadDialog.lbStatus.setText(QtCore.QString('Failed.'))
         
     # A message notifying upload sucessfully event.
     def doneUpload(self, message):
-        messageDialog = WarningDialog.WarningDialog("The video %s has been successfully uploaded." % str(message))
-        messageDialog.show()
+        pass
+        #self.uploadingList[str(message)].lbStatus.setText(QtCore.QString('Done.'))
+        
     def uploadFailed(self, message):
-        messageDialog = WarningDialog.WarningDialog("Upload failed: %s" %str(message))
-        messageDialog.show()
+        pass
+        #self.uploadingList[str(message)].lbStatus.setText(QtCore.QString('Failed.'))
         
     # Search for popular feeds.
     def on_btnTopRated_clicked(self):
@@ -638,12 +664,22 @@ class VideoPlayer(QtGui.QMainWindow):
                         self.failedLoginWarning,
                         username, password)
     
+    @QtCore.pyqtSlot()
+    def on_btnLogout_clicked(self):
+        self.yt_service = YouTubeService()
+        self.labelGreeting.setText('Hello')
+        
     # Show the username.
     def setUsernameView(self, username):
         self.labelGreeting.setText("Hello, %s" % username)
+        self.ledUsername.setText('')
+        self.ledPassword.setText('')
+        self.btnLogout.setEnabled(True)
         
     def failedLoginWarning(self):
-        print "Sorry, login failed!" 
+        print "Sorry, login failed!"
+        self.yt_service = YouTubeService()
+        self.btnLogout.setEnabled(False) 
         warningDialog = WarningDialog.WarningDialog(warning="Sorry, logging in failed", parent=self)
         warningDialog.show()
     

@@ -654,7 +654,7 @@ class VideoPlayer(QtGui.QMainWindow):
         elif feedName == "mostDiscussed":
             feed = yt_service.RetrieveMostDiscussedVideoFeed()
         elif feedName == "mostResponded":
-            feed = yt_service.RetrieveostRespondedVideoFeed()
+            feed = yt_service.RetrieveMostRespondedVideoFeed()
         elif feedName == 'recentlyFeatured':
             feed = yt_service.RetrieveRecentlyFeaturedVideoFeed()      
         elif feedName == "trending":

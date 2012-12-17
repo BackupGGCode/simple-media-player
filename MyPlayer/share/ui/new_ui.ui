@@ -38,7 +38,7 @@
     <item row="3" column="0" colspan="4">
      <widget class="QTabWidget" name="twgWebpage">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tbVideoPlayer">
        <attribute name="title">
@@ -171,7 +171,7 @@
         <string>Search result</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0" colspan="5">
+        <item row="0" column="0" colspan="2">
          <widget class="QWebView" name="videoList">
           <property name="url">
            <url>
@@ -180,51 +180,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="5">
+        <item row="1" column="0" colspan="2">
          <widget class="Line" name="line_7">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <spacer name="horizontalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>231</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Select video(s)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEditChooseVideo">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QPushButton" name="btnSelectToPlay">
-          <property name="text">
-           <string>Add to play list</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QPushButton" name="btnSelectToDownload">
-          <property name="text">
-           <string>Download</string>
           </property>
          </widget>
         </item>
@@ -287,42 +246,6 @@
      </spacer>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1161</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <addaction name="action_Save_playlist"/>
-    <addaction name="action_Load_playlist"/>
-    <addaction name="action_Open_download_folder"/>
-    <addaction name="separator"/>
-    <addaction name="action_Quit"/>
-   </widget>
-   <widget class="QMenu" name="menu_Preference">
-    <property name="title">
-     <string>&amp;Preference</string>
-    </property>
-    <addaction name="actionS_earch_option"/>
-   </widget>
-   <widget class="QMenu" name="menu_Help">
-    <property name="title">
-     <string>&amp;Help</string>
-    </property>
-    <addaction name="action_Guide"/>
-    <addaction name="action_About"/>
-   </widget>
-   <addaction name="menu_File"/>
-   <addaction name="menu_Preference"/>
-   <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget_3">
@@ -634,6 +557,34 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1161</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_Save_playlist"/>
+    <addaction name="action_Load_playlist"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_Guide"/>
+    <addaction name="action_About"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Help"/>
   </widget>
   <action name="action_Save_playlist">
    <property name="text">

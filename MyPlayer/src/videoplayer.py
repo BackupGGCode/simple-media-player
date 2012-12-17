@@ -272,8 +272,7 @@ class VideoPlayer(QtGui.QMainWindow):
                          QtCore.SIGNAL("doneSearching(QString)"), 
                          QtCore.SIGNAL("searchFailed()"), 
                          self.setHtml, 
-                         self.dummy,
-                         str(self.advancedSearchDialog.lineeditUserFeed.displayText()))        
+                         self.dummy)        
     
     # Return an instance that helps us to use youtube's services.
     def getYouTubeService(self, username='', password=''):
@@ -286,14 +285,14 @@ class VideoPlayer(QtGui.QMainWindow):
             self.yt_service = YouTubeService()
             return self.yt_service
     
-    def ytUserFeedSearch(self, username):
+    def ytUserFeedSearch(self):
         try:
             [vq, author, results_number, sort_by, racy,startIndex, time] = self.getAdvancedSearchOptions()
             print [vq, author, results_number, sort_by, racy,startIndex, time]
             yt_service = self.getYouTubeService()
-            query = query = gdata.youtube.service.YouTubeVideoQuery()
+            query = gdata.youtube.service.YouTubeVideoQuery()
             query.author = author
-            query.query.max_results = results_number
+            query.max_results = results_number
             query.orderby = sort_by
             query.racy = racy
             query.start_index = startIndex

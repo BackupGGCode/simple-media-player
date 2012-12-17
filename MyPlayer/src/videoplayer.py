@@ -164,18 +164,32 @@ class VideoPlayer(QtGui.QMainWindow):
         
     def getAdvancedSearchOptions(self):
         vq = str(self.advancedSearchDialog.optionDialogSearchTerm.text())
-        results_number = self.advancedSearchDialog.spbMaxResults.count()
-        sort_by = str(self.advancedSearchDialog.optionDialogSortby.text()).lower()
-        _format = int(str(self.advancedSearchDialog.optionDialogFormat.text())[:2])
-        safe = str(self.advancedSearchDialog.optionDialogSafeSearch.text()).lower()
-        genre = int(str(self.advancedSearchDialog.optionDialogGenre.text())[:2])
+        author = str(self.advancedSearchDialog.lineeditUserFeed.text())
+        results_number = self.advancedSearchDialog.spbMaxResults.value()
+        sort_by = str(self.advancedSearchDialog.optionDialogSortby.currentText()).lower()
         
-        return [vq, sort_by, safe, genre, results_number]
+        # Change to standard name.
+        if sort_by == 'published date':
+            sort_by = 'published'
+        elif sort_by == 'view count':
+            sort_by = 'viewCount'
+            
+        racy = str(self.advancedSearchDialog.optionDialogSafeSearch.currentText()).lower()
+        startIndex = self.advancedSearchDialog.spbStartIndex.value()
+        time = str(self.advancedSearchDialog.cbTime.currentText()).lower()
+        
+        return [vq, author, results_number, sort_by, racy,startIndex, time]
     
     def advancedSearch(self):
-        option = self.getAdvancedSearchOptions()
-        self.advancedSearchDialog.optionDialogSearchTerm.selectAll()
-        print option
+        [vq, author, results_number, sort_by, racy,startIndex, time] = self.getAdvancedSearchOptions()
+        #print  [vq, author, results_number, sort_by, racy,startIndex, time]
+            # Create a thread to do the search.
+        self.startThread(self.ytSearch, 
+                         QtCore.SIGNAL("doneSearching(QString)"), 
+                         QtCore.SIGNAL("searchFailed()"), 
+                         self.setHtml,
+                         self.dummy,
+                         vq, sort_by, racy, startIndex, results_number, time)  
         
     # Click a link in the list of videos.
     def linkClicked(self, url):
@@ -203,8 +217,26 @@ class VideoPlayer(QtGui.QMainWindow):
         
         #Start this thread.
         # Stop all the thread of the same type as this thread first.
-        name = function.__name__.lower()        
-        if name.find('search') != -1 or name.find('setplayerpage') != -1:
+        name = function.__name__.lower()
+        
+        # there should be only on 'search' thread.
+        if name.find('search') != -1:
+            count = len(self.threadPool) - 1
+            while count >= 0:
+                if self.threadType[count].find('search'):
+                    # Stop this thread first.
+                    if self.threadPool[count].stopped():
+                        print "This thread (%s) is stopped already" % count
+                    else:
+                        try:
+                            print "Stopping thread number", count
+                            self.threadPool[count].stop()
+                        except:
+                            pass
+                    break
+                count -= 1
+        
+        elif name.find('setplayerpage') != -1:
             # Thread of this type should not run concurrently.
             # Stop all previous thread of this type.
             count = len(self.threadPool) - 1
@@ -256,8 +288,17 @@ class VideoPlayer(QtGui.QMainWindow):
     
     def ytUserFeedSearch(self, username):
         try:
+            [vq, author, results_number, sort_by, racy,startIndex, time] = self.getAdvancedSearchOptions()
+            print [vq, author, results_number, sort_by, racy,startIndex, time]
             yt_service = self.getYouTubeService()
-            feed = yt_service.RetrieveUserVideosbyUsername(username)
+            query = query = gdata.youtube.service.YouTubeVideoQuery()
+            query.author = author
+            query.query.max_results = results_number
+            query.orderby = sort_by
+            query.racy = racy
+            query.start_index = startIndex
+            feed = yt_service.client.YouTubeQuery(query)
+      
             html = getHtmlFeedDescription(feed)
         except:
             html = "Sorry, no such user."
@@ -291,7 +332,7 @@ class VideoPlayer(QtGui.QMainWindow):
                          QtCore.SIGNAL("searchFailed()"), 
                          self.setHtml,
                          self.dummy,
-                         vq, 'relevance', 'include', 40)        
+                         vq, 'relevance', 'include', 1, 40, 'all_time')        
     
     
     def setVideoPlayerPage(self, html):
@@ -305,13 +346,15 @@ class VideoPlayer(QtGui.QMainWindow):
     
     # Do the search.
     #TODO Re-implement using YoutubeService.
-    def ytSearch(self, vq, orderby, racy, max_results):
+    def ytSearch(self, vq, orderby, racy, start_index, max_results, time):
+        print "Calling ytSearch with ", [vq, orderby, racy, start_index, max_results, time]
         try:
             # Init service.
             yt_service = self.getYouTubeService()
             #vq must be converted to str.
-            feed = yt_service.SearchWithVideoQuery(str(vq), orderby, racy, max_results)
+            feed = yt_service.SearchWithVideoQuery(vq, orderby, racy, start_index, max_results, time)
         except:
+            print "Something weird has occurred!"
             feed = None
         self.feed = feed
         html = getHtmlFeedDescription(feed)

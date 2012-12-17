@@ -6,15 +6,314 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>356</height>
+    <width>545</width>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Advanced Search</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
-   <item row="6" column="2" colspan="4">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Query options</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="5">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Search results</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spbMaxResults">
+       <property name="minimum">
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <number>500</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
+       </property>
+       <property name="value">
+        <number>25</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Sort by</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QComboBox" name="optionDialogSortby">
+       <item>
+        <property name="text">
+         <string>Relevance</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Published date</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>View count</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Rating</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>Start index</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QSpinBox" name="spbStartIndex">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>300</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Racy</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QComboBox" name="optionDialogSafeSearch">
+       <item>
+        <property name="text">
+         <string>Exclude</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Include</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Time</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
+      <widget class="QComboBox" name="cbTime">
+       <item>
+        <property name="text">
+         <string>All_time</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Today</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>This_week</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>This_month</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Action</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="label_8">
+     <property name="font">
+      <font>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Search by keywords</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3" colspan="2">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>128</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0">
+    <spacer name="horizontalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>59</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Search term</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="optionDialogSearchTerm">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="font">
+      <font>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Video by user</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>271</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0">
+    <spacer name="horizontalSpacer_8">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>59</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Username</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineeditUserFeed"/>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="font">
+      <font>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Standard feeds</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <spacer name="horizontalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>129</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="0">
+    <spacer name="horizontalSpacer_7">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>59</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="1" colspan="2">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QPushButton" name="btnTrending">
@@ -111,435 +410,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="1" colspan="6">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Search results</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="spbMaxResults">
-       <property name="minimum">
-        <number>10</number>
-       </property>
-       <property name="maximum">
-        <number>500</number>
-       </property>
-       <property name="singleStep">
-        <number>5</number>
-       </property>
-       <property name="value">
-        <number>25</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Sort by</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="optionDialogSortby">
-         <item>
-          <property name="text">
-           <string>Relevance</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Published date</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>View count</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Rating</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Format</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QComboBox" name="optionDialogFormat">
-         <item>
-          <property name="text">
-           <string>00 - All Formats</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>01- H. 264 mobile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>05 - Embeddable</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>06 - MPEG 4 mobile</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Safe search</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="optionDialogSafeSearch">
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Moderate</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Strict</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Genre</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3">
-        <widget class="QComboBox" name="optionDialogGenre">
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>30</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>00 - All</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>01 - Action</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>02 - Animations &amp; Film</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>03 - Classic TV</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>04 - Comedy</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>05 - Drama</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>06 - Home &amp; Garden</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>07 - News</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>08 - Reality &amp; Game Shows</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>09 - Science &amp; Tech</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>10 - Science Fiction</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>11 - Soaps</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>13 - Sports</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>14 - Travel</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>16 - Entertainment</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>17 - Documentary</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>20 - Nature</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>21 - Beauty &amp;Fashion</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>23 - Food</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>24 - Gaming</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>25 - Health &amp; Fitness</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>26 - Learning &amp; Education</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>27 - Foreign Languages</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <spacer name="horizontalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="5">
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>128</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Action</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" colspan="2">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Search by keywords</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Standard feeds</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
-    <spacer name="horizontalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="2" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Search term</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="optionDialogSearchTerm">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="4">
-    <spacer name="horizontalSpacer_6">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>129</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <spacer name="horizontalSpacer_7">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <spacer name="horizontalSpacer_8">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="2">
-    <widget class="QLabel" name="label_11">
-     <property name="text">
-      <string>Video by user</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="3" colspan="2">
-    <spacer name="horizontalSpacer_9">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>163</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="8" column="0" colspan="2">
-    <spacer name="horizontalSpacer_10">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>59</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="8" column="2" colspan="3">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Username</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineeditUserFeed"/>
-     </item>
-    </layout>
-   </item>
-   <item row="9" column="0" colspan="6">
+   <item row="9" column="0" colspan="4">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -552,20 +423,13 @@
      </property>
     </spacer>
    </item>
-   <item row="9" column="6">
+   <item row="9" column="4">
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Close</string>
      </property>
      <property name="autoDefault">
       <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Query options</string>
      </property>
     </widget>
    </item>
@@ -581,11 +445,43 @@
    <hints>
     <hint type="sourcelabel">
      <x>483</x>
-     <y>377</y>
+     <y>347</y>
     </hint>
     <hint type="destinationlabel">
      <x>265</x>
-     <y>366</y>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineeditUserFeed</sender>
+   <signal>returnPressed()</signal>
+   <receiver>lineeditUserFeed</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>187</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>239</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionDialogSearchTerm</sender>
+   <signal>returnPressed()</signal>
+   <receiver>optionDialogSearchTerm</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>213</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>273</x>
+     <y>126</y>
     </hint>
    </hints>
   </connection>

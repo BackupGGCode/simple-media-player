@@ -9,13 +9,15 @@ def getHtmlFeedDescription(feed):
           <title>Search result</title>
     </head>
     <body>
+    <ol>
     '''
     #html = '<html><head><meta http-equiv="Content-Type" content="text/html"; "charset=utf-8"><title>Search Result</title></head><body><ol>'
-    for entry in feed.entry:
-        try:
-            html += "<li>".decode('utf8') + unicode(print_entry.getHtmlEntry(entry)) + "</li>".decode('utf8')
-        except:
-            pass
+    if feed is not None:
+        for entry in feed.entry:
+            try:
+                html += "<li>".decode('utf8') + unicode(print_entry.getHtmlEntry(entry)) + "</li>".decode('utf8')
+            except:
+                pass
     html += u"</ol></body></html>"
     
     return html               

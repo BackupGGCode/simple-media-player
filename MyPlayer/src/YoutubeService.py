@@ -75,10 +75,12 @@ class YouTubeService():
 		feed = self.client.GetYouTubeUserFeed(username = username)
 		return feed;
 		
-	def SearchWithVideoQuery(self, vq, orderby, racy, max_results):
+	def SearchWithVideoQuery(self, vq, orderby, racy, start_index, max_results, time):
 		print vq, orderby, racy, max_results
 		query = gdata.youtube.service.YouTubeVideoQuery()
 		query.vq = vq
+		query.start_index = start_index
+		query.time = time
 		query.max_results = max_results
 		query.orderby = orderby
 		query.racy = racy

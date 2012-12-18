@@ -20,6 +20,10 @@
       <property name="text">
        <string>Advanced</string>
       </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../icons/1355789754_monotone_cog_settings_gear.png</normaloff>../icons/1355789754_monotone_cog_settings_gear.png</iconset>
+      </property>
      </widget>
     </item>
     <item row="1" column="3">
@@ -203,6 +207,10 @@
       <property name="text">
        <string>Seach</string>
       </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../icons/1355789615_Black_Search.png</normaloff>../icons/1355789615_Black_Search.png</iconset>
+      </property>
      </widget>
     </item>
     <item row="0" column="4" rowspan="4">
@@ -336,12 +344,20 @@
          <property name="text">
           <string>Login</string>
          </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../icons/1355789480_login.png</normaloff>../icons/1355789480_login.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnLogout">
          <property name="text">
           <string>Logout</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../icons/1355789538_logout.png</normaloff>../icons/1355789538_logout.png</iconset>
          </property>
         </widget>
        </item>
@@ -364,6 +380,10 @@
        </property>
        <property name="text">
         <string>Upload</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../icons/1355789871_upload_32.png</normaloff>../icons/1355789871_upload_32.png</iconset>
        </property>
       </widget>
      </item>
@@ -428,7 +448,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-backward.png</iconset>
+           <normaloff>../icons/media-skip-backward.png</normaloff>../icons/media-skip-backward.png</iconset>
          </property>
         </widget>
        </item>
@@ -451,7 +471,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</normaloff>../../../../../simple-media-player-old/trunk/MyPlayer/share/icons/media-skip-forward.png</iconset>
+           <normaloff>../icons/media-skip-forward.png</normaloff>../icons/media-skip-forward.png</iconset>
          </property>
         </widget>
        </item>
@@ -474,7 +494,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/media-playlist-shuffle.png</normaloff>../icons/media-playlist-shuffle.png</iconset>
+           <normaloff>../icons/1355788973_media-shuffle.png</normaloff>../icons/1355788973_media-shuffle.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -503,7 +523,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/list-remove.png</normaloff>../icons/list-remove.png</iconset>
+           <normaloff>../icons/1355789807_Black_Remove.png</normaloff>../icons/1355789807_Black_Remove.png</iconset>
          </property>
         </widget>
        </item>
@@ -526,7 +546,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/edit-clear.png</normaloff>../icons/edit-clear.png</iconset>
+           <normaloff>../icons/1355789106_Black_Trash.png</normaloff>../icons/1355789106_Black_Trash.png</iconset>
          </property>
         </widget>
        </item>

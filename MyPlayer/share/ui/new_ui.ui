@@ -6,265 +6,396 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1161</width>
-    <height>687</height>
+    <width>1007</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>YouTube Browser</string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QPushButton" name="btnSearchOption">
-      <property name="text">
-       <string>Advanced</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>../icons/1355789754_monotone_cog_settings_gear.png</normaloff>../icons/1355789754_monotone_cog_settings_gear.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <spacer name="horizontalSpacer_6">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>507</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="3" column="0" colspan="4">
-     <widget class="QTabWidget" name="twgWebpage">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tbVideoPlayer">
-       <attribute name="title">
-        <string>Video Player</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="0" colspan="6">
-         <widget class="Line" name="line_6">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Comment</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" rowspan="3">
-         <widget class="QPlainTextEdit" name="textEditComment"/>
-        </item>
-        <item row="2" column="2" rowspan="2">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>39</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="3" rowspan="3">
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Rating</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="5">
-         <widget class="QSpinBox" name="spbRating">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>5</number>
-          </property>
-          <property name="value">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" rowspan="2">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>42</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="3" column="4" rowspan="2">
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>42</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="3" column="5">
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>13</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="btnPost">
-          <property name="text">
-           <string>Post</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../icons/1355791717_spechbubble_2.png</normaloff>../icons/1355791717_spechbubble_2.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="5">
-         <widget class="QPushButton" name="btnRate">
-          <property name="text">
-           <string>Rate it!</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../icons/1355791782_keditbookmarks.png</normaloff>../icons/1355791782_keditbookmarks.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="6">
-         <widget class="QWebView" name="playerView">
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tbSearchResult">
-       <attribute name="title">
-        <string>Search result</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="0" colspan="2">
-         <widget class="Line" name="line_7">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QWebView" name="videoList">
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="4">
-     <widget class="Line" name="line_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="btnSearchVideo">
-      <property name="text">
-       <string>Seach</string>
-      </property>
-      <property name="icon">
-       <iconset>
-        <normaloff>../icons/1355789615_Black_Search.png</normaloff>../icons/1355789615_Black_Search.png</iconset>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4" rowspan="4">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
+   <layout class="QGridLayout" name="gridLayout_6">
     <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Search term</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" colspan="2">
-     <widget class="QLineEdit" name="lineEditSearch">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::StrongFocus</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>507</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="3">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>507</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QTabWidget" name="twgWebpage">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tbVideoPlayer">
+         <attribute name="title">
+          <string>Video Player</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="Phonon::VideoPlayer" name="vdpVideo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QWidget" name="wdgVideoControls" native="true">
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnStop">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Stop</string>
+               </property>
+               <property name="whatsThis">
+                <string>Stop current media</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/media-playback-stop.png</normaloff>../icons/media-playback-stop.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="btnPrevious">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Previous</string>
+               </property>
+               <property name="whatsThis">
+                <string>Play previous media</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/media-skip-backward.png</normaloff>../icons/media-skip-backward.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="Phonon::SeekSlider" name="sldSeekSlider"/>
+             </item>
+             <item row="0" column="4">
+              <widget class="Phonon::VolumeSlider" name="sldVolumeSlider">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="tracking">
+                <bool>true</bool>
+               </property>
+               <property name="muteVisible">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QPushButton" name="btnNext">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Next</string>
+               </property>
+               <property name="whatsThis">
+                <string>Play next media</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/media-skip-forward.png</normaloff>../icons/media-skip-forward.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QPushButton" name="btnFullscreen">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Show fullscreen</string>
+               </property>
+               <property name="whatsThis">
+                <string>Show video in fullscreen</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/view-fullscreen.png</normaloff>../icons/view-fullscreen.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLabel" name="lblTime">
+               <property name="toolTip">
+                <string>Current time</string>
+               </property>
+               <property name="whatsThis">
+                <string>Show current playback time</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QPushButton" name="btnDownloadPlaying">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/download.png</normaloff>../icons/download.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QComboBox" name="cbQuality">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>240p</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>360p</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>480p</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>720p</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>1080p</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnPlayPause">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Play/Pause</string>
+               </property>
+               <property name="whatsThis">
+                <string>Play or Pause current media</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/media-playback-start.png</normaloff>../icons/media-playback-start.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QPushButton" name="btnVideoFill">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Video Fills Entire Space</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/video-fill.png</normaloff>../icons/video-fill.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="11">
+              <widget class="QPushButton" name="btnShowPlayList">
+               <property name="maximumSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Show/Hide Playlist</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../icons/view-media-playlist.png</normaloff>../icons/view-media-playlist.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tbSearchResult">
+         <attribute name="title">
+          <string>Search result</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0" colspan="2">
+           <widget class="QWebView" name="videoList">
+            <property name="url">
+             <url>
+              <string>about:blank</string>
+             </url>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QLineEdit" name="lineEditSearch">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="btnSearchOption">
+        <property name="text">
+         <string>Advanced</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>507</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Search term</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="4">
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="btnSearchVideo">
+        <property name="text">
+         <string>Seach</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="dckPlayList">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>341</width>
+     <height>349</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>341</width>
+     <height>524287</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetVerticalTitleBar</set>
    </property>
@@ -272,7 +403,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4">
-    <layout class="QGridLayout" name="gridLayout_6">
+    <layout class="QGridLayout" name="gridLayout_10">
      <item row="0" column="0">
       <widget class="QLabel" name="labelGreeting">
        <property name="text">
@@ -280,7 +411,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="3">
+     <item row="1" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <layout class="QGridLayout" name="gridLayout_4">
@@ -332,7 +463,7 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="1" colspan="2">
+     <item row="2" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <spacer name="horizontalSpacer_5">
@@ -352,10 +483,6 @@
          <property name="text">
           <string>Login</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/1355789480_login.png</normaloff>../icons/1355789480_login.png</iconset>
-         </property>
         </widget>
        </item>
        <item>
@@ -363,22 +490,18 @@
          <property name="text">
           <string>Logout</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/1355789538_logout.png</normaloff>../icons/1355789538_logout.png</iconset>
-         </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="3" column="0" colspan="3">
+     <item row="3" column="0" colspan="2">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="4" column="0">
       <widget class="QPushButton" name="btnUpload">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -389,33 +512,126 @@
        <property name="text">
         <string>Upload</string>
        </property>
-       <property name="icon">
-        <iconset>
-         <normaloff>../icons/1355789871_upload_32.png</normaloff>../icons/1355789871_upload_32.png</iconset>
-       </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="3">
+     <item row="5" column="0" colspan="2">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="3">
+     <item row="6" column="0" colspan="2">
       <widget class="QTabWidget" name="ltwgLists">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="tabPosition">
+        <enum>QTabWidget::East</enum>
+       </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tbPlaylist">
         <attribute name="title">
          <string>Playlist</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
-         <item row="0" column="0">
+         <item row="1" column="1">
+          <widget class="QPushButton" name="btnRemoveMedia">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Remove media</string>
+           </property>
+           <property name="whatsThis">
+            <string>Remove media from playlist</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../icons/list-remove.png</normaloff>../icons/list-remove.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="btnShufflePlayList">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Shuffle</string>
+           </property>
+           <property name="whatsThis">
+            <string>Shuffle playlist</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../icons/media-playlist-shuffle.png</normaloff>../icons/media-playlist-shuffle.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="btnClearPlayList">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Clear playlist</string>
+           </property>
+           <property name="whatsThis">
+            <string>Clear playlist</string>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../icons/edit-clear.png</normaloff>../icons/edit-clear.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>166</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="0" colspan="4">
           <widget class="QListWidget" name="lswPlaylist">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>2</horstretch>
              <verstretch>2</verstretch>
             </sizepolicy>
@@ -433,154 +649,76 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tbComments">
+        <attribute name="title">
+         <string>Comments</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="0" column="0" colspan="4">
+          <widget class="QWebView" name="webView">
+           <property name="url">
+            <url>
+             <string>about:blank</string>
+            </url>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Comment</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Rating</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spbRating">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QPushButton" name="btnRate">
+           <property name="text">
+            <string>Rate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QPushButton" name="btnPost">
+           <property name="text">
+            <string>Post</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="4">
+          <widget class="QPlainTextEdit" name="textEditComment"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="btnPrevious">
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="toolTip">
-          <string>Previous</string>
-         </property>
-         <property name="whatsThis">
-          <string>Play previous media</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/media-skip-backward.png</normaloff>../icons/media-skip-backward.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnNext">
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="toolTip">
-          <string>Next</string>
-         </property>
-         <property name="whatsThis">
-          <string>Play next media</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/media-skip-forward.png</normaloff>../icons/media-skip-forward.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnShufflePlayList">
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="toolTip">
-          <string>Shuffle</string>
-         </property>
-         <property name="whatsThis">
-          <string>Shuffle playlist</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/1355788973_media-shuffle.png</normaloff>../icons/1355788973_media-shuffle.png</iconset>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="flat">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnRemoveMedia">
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="toolTip">
-          <string>Remove media</string>
-         </property>
-         <property name="whatsThis">
-          <string>Remove media from playlist</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/1355789807_Black_Remove.png</normaloff>../icons/1355789807_Black_Remove.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnClearPlayList">
-         <property name="maximumSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="toolTip">
-          <string>Clear playlist</string>
-         </property>
-         <property name="whatsThis">
-          <string>Clear playlist</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../icons/1355789106_Black_Trash.png</normaloff>../icons/1355789106_Black_Trash.png</iconset>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="7" column="2">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>144</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
     <widget class="QWidget" name="widget" native="true">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>280</y>
-       <width>221</width>
-       <height>131</height>
+       <x>50</x>
+       <y>395</y>
+       <width>245</width>
+       <height>226</height>
       </rect>
      </property>
     </widget>
@@ -591,8 +729,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1161</width>
-     <height>21</height>
+     <width>1007</width>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -651,6 +789,21 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Phonon::VideoPlayer</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/videoplayer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::SeekSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/seekslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::VolumeSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/volumeslider.h</header>
+  </customwidget>
   <customwidget>
    <class>QWebView</class>
    <extends>QWidget</extends>

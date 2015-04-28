@@ -1,0 +1,1 @@
+This is a term project on a multimedia communication course.
